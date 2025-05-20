@@ -1,0 +1,1023 @@
+// Copyright lowRISC contributors (OpenTitan project).
+// Licensed under the Apache License, Version 2.0, see LICENSE for details.
+// SPDX-License-Identifier: Apache-2.0
+
+<%
+  page_width = (pages_per_bank-1).bit_length()
+  bank_width = (banks-1).bit_length()
+  total_pages = banks * pages_per_bank
+  page_idx_width = (total_pages-1).bit_length()
+  page_num_width = total_pages.bit_length()
+  bytes_per_page = words_per_page * word_bytes
+  total_byte_width = int(total_pages*bytes_per_page-1).bit_length()
+  info_type_width = (info_types-1).bit_length()
+  max_fifo_depth = 16
+  max_fifo_width = max_fifo_depth.bit_length()
+%>
+
+{
+  name:               "flash_macro",
+  human_name:         "Flash Macro",
+  one_line_desc:      "Integrated non-volatile flash memory macro",
+  one_paragraph_desc: '''
+  Flash macro contains just the third-party flash module, and requires connections to a flash controller to operate.
+  '''
+  // Unique comportable IP identifier defined under KNOWN_CIP_IDS in the regtool.
+  cip_id:             "45",
+  design_spec:        "../doc",
+  dv_doc:             "../doc/dv"
+  hw_checklist:       "../doc/checklist",
+  sw_checklist:       "/sw/device/lib/dif/dif_flash_ctrl",
+  revisions: [
+  ]
+  clocking: [
+    {clock: "clk_i", reset: "rst_ni", primary: true},
+  ]
+  bus_interfaces: [
+    { protocol: "tlul", direction: "device" }
+  ],
+  available_input_list: [
+    { name: "tck", desc: "jtag clock" },
+    { name: "tms", desc: "jtag tms" },
+    { name: "tdi", desc: "jtag input" },
+  ],
+  available_output_list: [
+    { name: "tdo", desc: "jtag output" },
+  ],
+  interrupt_list: [
+  ],
+
+  alert_list: [
+    { name: "fatal_prim_flash_alert",
+      desc: "Fatal alert triggered inside the flash primitive, including fatal TL-UL bus integrity faults of the test interface."
+    },
+    { name: "recov_prim_flash_alert",
+      desc: "Recoverable alert triggered inside the flash primitive."
+    }
+  ],
+
+  inter_signal_list: [
+    // Main req/rsp signals from flash_ctrl
+    { struct: "flash_phy_prim_flash_req",
+      package: "flash_phy_pkg",
+      type: "uni",
+      act: "req",
+      name: "flash_req"
+    },
+
+    { struct: "flash_phy_prim_flash_rsp",
+      package: "flash_phy_pkg",
+      type: "uni",
+      act: "rsp",
+      name: "flash_rsp"
+    },
+
+    // Other signals to flash_ctrl
+    { struct: "logic"
+      package: ""
+      type: "uni"
+      act: "req"
+      name: "prog_type_avail"
+    },
+
+    { struct: "logic"
+      package: ""
+      type: "uni"
+      act: "req"
+      name: "init_busy"
+    },
+
+    // Other inter-module signals
+    { struct: "lc_tx",
+      package: "lc_ctrl_pkg",
+      type: "uni"
+      act: "rcv"
+      name: "lc_nvm_debug_en"
+    },
+
+    { struct: "mubi4"
+      package: "prim_mubi_pkg"
+      type: "uni"
+      act: "rcv"
+      name: "flash_bist_enable"
+    },
+
+    { struct: "logic"
+      package: ""
+      type: "uni"
+      act: "rcv"
+      name: "flash_power_down_h"
+    },
+    { struct: "logic"
+      package: ""
+      type: "uni"
+      act: "rcv"
+      name: "flash_power_ready_h"
+    },
+    { struct: "",
+      package: "",
+      width: "2",
+      type: "io"
+      act: "none"
+      name: "flash_test_mode_a"
+    },
+
+    { struct: "",
+      package: "",
+      type: "io"
+      act: "none"
+      name: "flash_test_voltage_h"
+    },
+
+    { struct: "ast_obs_ctrl",
+      type: "uni",
+      name: "obs_ctrl",
+      act: "rcv",
+      package: "ast_pkg"
+    }
+
+    { struct: "logic",
+      type: "uni",
+      name: "fla_obs",
+      act: "req",
+      width: "8",
+      package: ""
+    }
+
+  ],
+  countermeasures: [],
+
+  scan: "true",       // Enable `scanmode_i` port
+  scan_en: "true",    // Enable `scan_en_i` port
+  scan_reset: "true", // Enable `scan_rst_ni` port
+  param_list: [
+    // The reg parameters can be modified directly through top_*.hjson.
+    // The template will automatically propagate the appropriate values.
+  ],
+
+  features: [
+  ],
+
+  regwidth: "32",
+  registers: [
+    {
+      name: "CSR0_REGWEN",
+      desc: "",
+      fields: [
+        {
+          bits: "0",
+          name: "field0",
+          swaccess: "rw0c",
+          hwaccess: "none",
+          resval: "1",
+          tags: [],
+          desc: "",
+          enum: []
+        }
+      ],
+      hwext: "False",
+      hwqe: "False",
+      hwre: "False",
+      tags: [],
+      shadowed: "False"
+    },
+    {
+      name: "CSR1",
+      desc: "",
+      fields: [
+        {
+          bits: "7:0",
+          name: "field0",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        },
+        {
+          bits: "12:8",
+          name: "field1",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        }
+      ],
+      hwext: "False",
+      hwqe: "False",
+      hwre: "False",
+      tags: [],
+      shadowed: "False",
+      regwen: "CSR0_REGWEN"
+    },
+    {
+      name: "CSR2",
+      desc: "",
+      fields: [
+        {
+          bits: "0",
+          name: "field0",
+          swaccess: "rw1c",
+          hwaccess: "hrw",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        },
+        {
+          bits: "1",
+          name: "field1",
+          swaccess: "rw1c",
+          hwaccess: "hrw",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        },
+        {
+          bits: "2",
+          name: "field2",
+          swaccess: "rw1c",
+          hwaccess: "hrw",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        },
+        {
+          bits: "3",
+          name: "field3",
+          swaccess: "rw",
+          hwaccess: "hrw",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        },
+        {
+          bits: "4",
+          name: "field4",
+          swaccess: "rw1c",
+          hwaccess: "hrw",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        },
+        {
+          bits: "5",
+          name: "field5",
+          swaccess: "rw1c",
+          hwaccess: "hrw",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        },
+        {
+          bits: "6",
+          name: "field6",
+          swaccess: "rw1c",
+          hwaccess: "hrw",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        },
+        {
+          bits: "7",
+          name: "field7",
+          swaccess: "rw",
+          hwaccess: "hrw",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        }
+      ],
+      hwext: "False",
+      hwqe: "False",
+      hwre: "False",
+      tags: [],
+      shadowed: "False"
+    },
+    {
+      name: "CSR3",
+      desc: "",
+      fields: [
+        {
+          bits: "3:0",
+          name: "field0",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        },
+        {
+          bits: "7:4",
+          name: "field1",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        },
+        {
+          bits: "10:8",
+          name: "field2",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        },
+        {
+          bits: "13:11",
+          name: "field3",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        },
+        {
+          bits: "16:14",
+          name: "field4",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        },
+        {
+          bits: "19:17",
+          name: "field5",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        },
+        {
+          bits: "20",
+          name: "field6",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        },
+        {
+          bits: "23:21",
+          name: "field7",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        },
+        {
+          bits: "25:24",
+          name: "field8",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        },
+        {
+          bits: "27:26",
+          name: "field9",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        }
+      ],
+      hwext: "False",
+      hwqe: "False",
+      hwre: "False",
+      tags: [],
+      shadowed: "False",
+      regwen: "CSR0_REGWEN"
+    },
+    {
+      name: "CSR4",
+      desc: "",
+      fields: [
+        {
+          bits: "2:0",
+          name: "field0",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        },
+        {
+          bits: "5:3",
+          name: "field1",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        },
+        {
+          bits: "8:6",
+          name: "field2",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        },
+        {
+          bits: "11:9",
+          name: "field3",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        }
+      ],
+      hwext: "False",
+      hwqe: "False",
+      hwre: "False",
+      tags: [],
+      shadowed: "False",
+      regwen: "CSR0_REGWEN"
+    },
+    {
+      name: "CSR5",
+      desc: "",
+      fields: [
+        {
+          bits: "2:0",
+          name: "field0",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        },
+        {
+          bits: "4:3",
+          name: "field1",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        },
+        {
+          bits: "13:5",
+          name: "field2",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        },
+        {
+          bits: "18:14",
+          name: "field3",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        },
+        {
+          bits: "22:19",
+          name: "field4",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        }
+      ],
+      hwext: "False",
+      hwqe: "False",
+      hwre: "False",
+      tags: [],
+      shadowed: "False",
+      regwen: "CSR0_REGWEN"
+    },
+    {
+      name: "CSR6",
+      desc: "",
+      fields: [
+        {
+          bits: "2:0",
+          name: "field0",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        },
+        {
+          bits: "5:3",
+          name: "field1",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        },
+        {
+          bits: "13:6",
+          name: "field2",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        },
+        {
+          bits: "16:14",
+          name: "field3",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        },
+        {
+          bits: "18:17",
+          name: "field4",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        },
+        {
+          bits: "20:19",
+          name: "field5",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        },
+        {
+          bits: "22:21",
+          name: "field6",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        },
+        {
+          bits: "23",
+          name: "field7",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        },
+        {
+          bits: "24",
+          name: "field8",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        }
+      ],
+      hwext: "False",
+      hwqe: "False",
+      hwre: "False",
+      tags: [],
+      shadowed: "False",
+      regwen: "CSR0_REGWEN"
+    },
+    {
+      name: "CSR7",
+      desc: "",
+      fields: [
+        {
+          bits: "7:0",
+          name: "field0",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        },
+        {
+          bits: "16:8",
+          name: "field1",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        }
+      ],
+      hwext: "False",
+      hwqe: "False",
+      hwre: "False",
+      tags: [],
+      shadowed: "False",
+      regwen: "CSR0_REGWEN"
+    },
+    {
+      name: "CSR8",
+      desc: "",
+      fields: [
+        {
+          bits: "31:0",
+          name: "field0",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        }
+      ],
+      hwext: "False",
+      hwqe: "False",
+      hwre: "False",
+      tags: [],
+      shadowed: "False",
+      regwen: "CSR0_REGWEN"
+    },
+    {
+      name: "CSR9",
+      desc: "",
+      fields: [
+        {
+          bits: "31:0",
+          name: "field0",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        }
+      ],
+      hwext: "False",
+      hwqe: "False",
+      hwre: "False",
+      tags: [],
+      shadowed: "False",
+      regwen: "CSR0_REGWEN"
+    },
+    {
+      name: "CSR10",
+      desc: "",
+      fields: [
+        {
+          bits: "31:0",
+          name: "field0",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        }
+      ],
+      hwext: "False",
+      hwqe: "False",
+      hwre: "False",
+      tags: [],
+      shadowed: "False",
+      regwen: "CSR0_REGWEN"
+    },
+    {
+      name: "CSR11",
+      desc: "",
+      fields: [
+        {
+          bits: "31:0",
+          name: "field0",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        }
+      ],
+      hwext: "False",
+      hwqe: "False",
+      hwre: "False",
+      tags: [],
+      shadowed: "False",
+      regwen: "CSR0_REGWEN"
+    },
+    {
+      name: "CSR12",
+      desc: "",
+      fields: [
+        {
+          bits: "9:0",
+          name: "field0",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        }
+      ],
+      hwext: "False",
+      hwqe: "False",
+      hwre: "False",
+      tags: [],
+      shadowed: "False",
+      regwen: "CSR0_REGWEN"
+    },
+    {
+      name: "CSR13",
+      desc: "",
+      fields: [
+        {
+          bits: "19:0",
+          name: "field0",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        },
+        {
+          bits: "20",
+          name: "field1",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        }
+      ],
+      hwext: "False",
+      hwqe: "False",
+      hwre: "False",
+      tags: [],
+      shadowed: "False",
+      regwen: "CSR0_REGWEN"
+    },
+    {
+      name: "CSR14",
+      desc: "",
+      fields: [
+        {
+          bits: "7:0",
+          name: "field0",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        },
+        {
+          bits: "8",
+          name: "field1",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        }
+      ],
+      hwext: "False",
+      hwqe: "False",
+      hwre: "False",
+      tags: [],
+      shadowed: "False",
+      regwen: "CSR0_REGWEN"
+    },
+    {
+      name: "CSR15",
+      desc: "",
+      fields: [
+        {
+          bits: "7:0",
+          name: "field0",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        },
+        {
+          bits: "8",
+          name: "field1",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        }
+      ],
+      hwext: "False",
+      hwqe: "False",
+      hwre: "False",
+      tags: [],
+      shadowed: "False",
+      regwen: "CSR0_REGWEN"
+    },
+    {
+      name: "CSR16",
+      desc: "",
+      fields: [
+        {
+          bits: "7:0",
+          name: "field0",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        },
+        {
+          bits: "8",
+          name: "field1",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        }
+      ],
+      hwext: "False",
+      hwqe: "False",
+      hwre: "False",
+      tags: [],
+      shadowed: "False",
+      regwen: "CSR0_REGWEN"
+    },
+    {
+      name: "CSR17",
+      desc: "",
+      fields: [
+        {
+          bits: "7:0",
+          name: "field0",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        },
+        {
+          bits: "8",
+          name: "field1",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        }
+      ],
+      hwext: "False",
+      hwqe: "False",
+      hwre: "False",
+      tags: [],
+      shadowed: "False",
+      regwen: "CSR0_REGWEN"
+    },
+    {
+      name: "CSR18",
+      desc: "",
+      fields: [
+        {
+          bits: "0",
+          name: "field0",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        }
+      ],
+      hwext: "False",
+      hwqe: "False",
+      hwre: "False",
+      tags: [],
+      shadowed: "False",
+      regwen: "CSR0_REGWEN"
+    },
+    {
+      name: "CSR19",
+      desc: "",
+      fields: [
+        {
+          bits: "0",
+          name: "field0",
+          swaccess: "rw",
+          hwaccess: "hro",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        }
+      ],
+      hwext: "False",
+      hwqe: "False",
+      hwre: "False",
+      tags: [],
+      shadowed: "False",
+      regwen: "CSR0_REGWEN"
+    },
+    {
+      name: "CSR20",
+      desc: "",
+      fields: [
+        {
+          bits: "0",
+          name: "field0",
+          swaccess: "rw1c",
+          hwaccess: "hrw",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        },
+        {
+          bits: "1",
+          name: "field1",
+          swaccess: "rw1c",
+          hwaccess: "hrw",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        },
+        {
+          bits: "2",
+          name: "field2",
+          swaccess: "ro",
+          hwaccess: "hrw",
+          resval: "0",
+          tags: [],
+          desc: "",
+          enum: []
+        }
+      ],
+      hwext: "False",
+      hwqe: "False",
+      hwre: "False",
+      tags: [],
+      shadowed: "False"
+    }
+  ]
+}

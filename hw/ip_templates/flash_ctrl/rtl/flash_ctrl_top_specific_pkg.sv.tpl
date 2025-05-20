@@ -385,7 +385,6 @@ package flash_ctrl_top_specific_pkg;
     logic [KeyWidth-1:0]  rand_data_key;
     logic                 alert_trig;
     logic                 alert_ack;
-    jtag_pkg::jtag_req_t  jtag_req;
     prim_mubi_pkg::mubi4_t flash_disable;
   } flash_req_t;
 
@@ -414,7 +413,6 @@ package flash_ctrl_top_specific_pkg;
     rand_data_key: '0,
     alert_trig:    1'b0,
     alert_ack:     1'b0,
-    jtag_req:      '0,
     flash_disable: prim_mubi_pkg::MuBi4False
   };
 
@@ -430,7 +428,6 @@ package flash_ctrl_top_specific_pkg;
     logic                    macro_err;
     logic [NumBanks-1:0]     ecc_single_err;
     logic [NumBanks-1:0][BusAddrW-1:0] ecc_addr;
-    jtag_pkg::jtag_rsp_t     jtag_rsp;
     logic                    prog_intg_err;
     logic                    storage_relbl_err;
     logic                    storage_intg_err;
@@ -453,7 +450,6 @@ package flash_ctrl_top_specific_pkg;
     macro_err:          1'b0,
     ecc_single_err:     '0,
     ecc_addr:           '0,
-    jtag_rsp:           '0,
     prog_intg_err:      '0,
     storage_relbl_err:  '0,
     storage_intg_err:   '0,

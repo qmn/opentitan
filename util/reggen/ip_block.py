@@ -68,6 +68,7 @@ KNOWN_CIP_IDS = {
     42: 'soc_dbg_ctrl',
     43: 'racl_ctrl',
     44: 'prim_otp',
+    45: 'prim_flash',
 }
 
 REQUIRED_ALIAS_FIELDS = {
