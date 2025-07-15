@@ -6,18 +6,6 @@
 module xbar_main_bind;
 `ifndef GATE_LEVEL
   // Host interfaces
-  bind xbar_main tlul_assert #(.EndpointType("Device")) tlul_assert_host_rv_core_ibex__corei (
-    .clk_i  (clk_main_i),
-    .rst_ni (rst_main_ni),
-    .h2d    (tl_rv_core_ibex__corei_i),
-    .d2h    (tl_rv_core_ibex__corei_o)
-  );
-  bind xbar_main tlul_assert #(.EndpointType("Device")) tlul_assert_host_rv_core_ibex__cored (
-    .clk_i  (clk_main_i),
-    .rst_ni (rst_main_ni),
-    .h2d    (tl_rv_core_ibex__cored_i),
-    .d2h    (tl_rv_core_ibex__cored_o)
-  );
   bind xbar_main tlul_assert #(.EndpointType("Device")) tlul_assert_host_rv_dm__sba (
     .clk_i  (clk_main_i),
     .rst_ni (rst_main_ni),
@@ -205,12 +193,6 @@ module xbar_main_bind;
     .rst_ni (rst_main_ni),
     .h2d    (tl_keymgr_dpe_o),
     .d2h    (tl_keymgr_dpe_i)
-  );
-  bind xbar_main tlul_assert #(.EndpointType("Host")) tlul_assert_device_rv_core_ibex__cfg (
-    .clk_i  (clk_main_i),
-    .rst_ni (rst_main_ni),
-    .h2d    (tl_rv_core_ibex__cfg_o),
-    .d2h    (tl_rv_core_ibex__cfg_i)
   );
   bind xbar_main tlul_assert #(.EndpointType("Host")) tlul_assert_device_sram_ctrl_main__regs (
     .clk_i  (clk_main_i),

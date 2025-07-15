@@ -61,9 +61,6 @@ tl_device_t xbar_devices[$] = '{
     '{"keymgr_dpe", '{
         '{32'h21140000, 32'h211400ff}
     }},
-    '{"rv_core_ibex__cfg", '{
-        '{32'h211f0000, 32'h211f07ff}
-    }},
     '{"sram_ctrl_main__regs", '{
         '{32'h211c0000, 32'h211c003f}
     }},
@@ -214,14 +211,7 @@ tl_device_t xbar_devices[$] = '{
 
   // List of Xbar hosts
 tl_host_t xbar_hosts[$] = '{
-    '{"rv_core_ibex__corei", 0, '{
-        "rom_ctrl0__rom",
-        "rom_ctrl1__rom",
-        "rv_dm__mem",
-        "sram_ctrl_main__ram",
-        "soc_proxy__ctn"}}
-    ,
-    '{"rv_core_ibex__cored", 1, '{
+    '{"rv_dm__sba", 0, '{
         "rom_ctrl0__rom",
         "rom_ctrl0__regs",
         "rom_ctrl1__rom",
@@ -259,7 +249,6 @@ tl_host_t xbar_hosts[$] = '{
         "keymgr_dpe",
         "kmac",
         "sram_ctrl_main__regs",
-        "rv_core_ibex__cfg",
         "sram_ctrl_mbox__ram",
         "sram_ctrl_mbox__regs",
         "soc_proxy__ctn",
@@ -276,62 +265,7 @@ tl_host_t xbar_hosts[$] = '{
         "mbx_pcie0__core",
         "mbx_pcie1__core"}}
     ,
-    '{"rv_dm__sba", 2, '{
-        "rom_ctrl0__rom",
-        "rom_ctrl0__regs",
-        "rom_ctrl1__rom",
-        "rom_ctrl1__regs",
-        "rv_dm__mem",
-        "rv_dm__regs",
-        "sram_ctrl_main__ram",
-        "uart0",
-        "i2c0",
-        "gpio",
-        "spi_host0",
-        "spi_device",
-        "rv_timer",
-        "pwrmgr_aon",
-        "rstmgr_aon",
-        "clkmgr_aon",
-        "pinmux_aon",
-        "otp_ctrl__core",
-        "otp_macro__prim",
-        "lc_ctrl__regs",
-        "alert_handler",
-        "ast",
-        "sram_ctrl_ret_aon__ram",
-        "sram_ctrl_ret_aon__regs",
-        "aon_timer_aon",
-        "soc_dbg_ctrl__core",
-        "aes",
-        "entropy_src",
-        "csrng",
-        "edn0",
-        "edn1",
-        "hmac",
-        "rv_plic",
-        "otbn",
-        "keymgr_dpe",
-        "kmac",
-        "sram_ctrl_main__regs",
-        "rv_core_ibex__cfg",
-        "sram_ctrl_mbox__ram",
-        "sram_ctrl_mbox__regs",
-        "soc_proxy__ctn",
-        "soc_proxy__core",
-        "dma",
-        "mbx0__core",
-        "mbx1__core",
-        "mbx2__core",
-        "mbx3__core",
-        "mbx4__core",
-        "mbx5__core",
-        "mbx6__core",
-        "mbx_jtag__core",
-        "mbx_pcie0__core",
-        "mbx_pcie1__core"}}
-    ,
-    '{"dma__host", 3, '{
+    '{"dma__host", 1, '{
         "sram_ctrl_main__ram",
         "sram_ctrl_mbox__ram",
         "aes",
@@ -360,33 +294,33 @@ tl_host_t xbar_hosts[$] = '{
         "aon_timer_aon",
         "soc_dbg_ctrl__core"}}
     ,
-    '{"mbx0__sram", 4, '{
+    '{"mbx0__sram", 2, '{
         "sram_ctrl_mbox__ram"}}
     ,
-    '{"mbx1__sram", 5, '{
+    '{"mbx1__sram", 3, '{
         "sram_ctrl_mbox__ram"}}
     ,
-    '{"mbx2__sram", 6, '{
+    '{"mbx2__sram", 4, '{
         "sram_ctrl_mbox__ram"}}
     ,
-    '{"mbx3__sram", 7, '{
+    '{"mbx3__sram", 5, '{
         "sram_ctrl_mbox__ram"}}
     ,
-    '{"mbx4__sram", 8, '{
+    '{"mbx4__sram", 6, '{
         "sram_ctrl_mbox__ram"}}
     ,
-    '{"mbx5__sram", 9, '{
+    '{"mbx5__sram", 7, '{
         "sram_ctrl_mbox__ram"}}
     ,
-    '{"mbx6__sram", 10, '{
+    '{"mbx6__sram", 8, '{
         "sram_ctrl_mbox__ram"}}
     ,
-    '{"mbx_jtag__sram", 11, '{
+    '{"mbx_jtag__sram", 9, '{
         "sram_ctrl_mbox__ram"}}
     ,
-    '{"mbx_pcie0__sram", 12, '{
+    '{"mbx_pcie0__sram", 10, '{
         "sram_ctrl_mbox__ram"}}
     ,
-    '{"mbx_pcie1__sram", 13, '{
+    '{"mbx_pcie1__sram", 11, '{
         "sram_ctrl_mbox__ram"}}
 };

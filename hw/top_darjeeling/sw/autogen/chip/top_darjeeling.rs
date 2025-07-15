@@ -749,20 +749,6 @@ pub const SOC_DBG_CTRL_CORE_BASE_ADDR: usize = 0x30170000;
 /// `SOC_DBG_CTRL_CORE_BASE_ADDR + SOC_DBG_CTRL_CORE_SIZE_BYTES`.
 pub const SOC_DBG_CTRL_CORE_SIZE_BYTES: usize = 0x20;
 
-/// Peripheral base address for cfg device on rv_core_ibex in top darjeeling.
-///
-/// This should be used with #mmio_region_from_addr to access the memory-mapped
-/// registers associated with the peripheral (usually via a DIF).
-pub const RV_CORE_IBEX_CFG_BASE_ADDR: usize = 0x211F0000;
-
-/// Peripheral size for cfg device on rv_core_ibex in top darjeeling.
-///
-/// This is the size (in bytes) of the peripheral's reserved memory area. All
-/// memory-mapped registers associated with this peripheral should have an
-/// address between #RV_CORE_IBEX_CFG_BASE_ADDR and
-/// `RV_CORE_IBEX_CFG_BASE_ADDR + RV_CORE_IBEX_CFG_SIZE_BYTES`.
-pub const RV_CORE_IBEX_CFG_SIZE_BYTES: usize = 0x800;
-
 /// Memory base address for ctn in top darjeeling.
 pub const CTN_BASE_ADDR: usize = 0x40000000;
 
@@ -1869,8 +1855,6 @@ pub enum AlertPeripheral {
     RaclCtrl = 43,
     /// ac_range_check
     AcRangeCheck = 44,
-    /// rv_core_ibex
-    RvCoreIbex = 45,
 }
 
 /// Alert Handler Alert Source.
@@ -2082,14 +2066,6 @@ pub enum AlertId {
     AcRangeCheckRecovCtrlUpdateErr = 99,
     /// ac_range_check_fatal_fault
     AcRangeCheckFatalFault = 100,
-    /// rv_core_ibex_fatal_sw_err
-    RvCoreIbexFatalSwErr = 101,
-    /// rv_core_ibex_recov_sw_err
-    RvCoreIbexRecovSwErr = 102,
-    /// rv_core_ibex_fatal_hw_err
-    RvCoreIbexFatalHwErr = 103,
-    /// rv_core_ibex_recov_hw_err
-    RvCoreIbexRecovHwErr = 104,
 }
 
 impl TryFrom<u32> for AlertId {
@@ -2197,10 +2173,6 @@ impl TryFrom<u32> for AlertId {
             98 => Ok(Self::RaclCtrlRecovCtrlUpdateErr),
             99 => Ok(Self::AcRangeCheckRecovCtrlUpdateErr),
             100 => Ok(Self::AcRangeCheckFatalFault),
-            101 => Ok(Self::RvCoreIbexFatalSwErr),
-            102 => Ok(Self::RvCoreIbexRecovSwErr),
-            103 => Ok(Self::RvCoreIbexFatalHwErr),
-            104 => Ok(Self::RvCoreIbexRecovHwErr),
             _ => Err(val),
         }
     }
@@ -2210,7 +2182,7 @@ impl TryFrom<u32> for AlertId {
 ///
 /// This array is a mapping from `AlertId` to
 /// `AlertPeripheral`.
-pub const ALERT_FOR_PERIPHERAL: [AlertPeripheral; 105] = [
+pub const ALERT_FOR_PERIPHERAL: [AlertPeripheral; 101] = [
     // Uart0FatalFault -> AlertPeripheral::Uart0
     AlertPeripheral::Uart0,
     // GpioFatalFault -> AlertPeripheral::Gpio
@@ -2413,14 +2385,6 @@ pub const ALERT_FOR_PERIPHERAL: [AlertPeripheral; 105] = [
     AlertPeripheral::AcRangeCheck,
     // AcRangeCheckFatalFault -> AlertPeripheral::AcRangeCheck
     AlertPeripheral::AcRangeCheck,
-    // RvCoreIbexFatalSwErr -> AlertPeripheral::RvCoreIbex
-    AlertPeripheral::RvCoreIbex,
-    // RvCoreIbexRecovSwErr -> AlertPeripheral::RvCoreIbex
-    AlertPeripheral::RvCoreIbex,
-    // RvCoreIbexFatalHwErr -> AlertPeripheral::RvCoreIbex
-    AlertPeripheral::RvCoreIbex,
-    // RvCoreIbexRecovHwErr -> AlertPeripheral::RvCoreIbex
-    AlertPeripheral::RvCoreIbex,
 ];
 
 // PERIPH_INSEL ranges from 0 to NUM_MIO_PADS + 2 -1}

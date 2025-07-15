@@ -14,18 +14,6 @@
     // host
     { struct: "tl"
       type:   "req_rsp"
-      name:   "tl_rv_core_ibex__corei"
-      act:    "rsp"
-      package: "tlul_pkg"
-    }
-    { struct: "tl"
-      type:   "req_rsp"
-      name:   "tl_rv_core_ibex__cored"
-      act:    "rsp"
-      package: "tlul_pkg"
-    }
-    { struct: "tl"
-      type:   "req_rsp"
       name:   "tl_rv_dm__sba"
       act:    "rsp"
       package: "tlul_pkg"
@@ -208,12 +196,6 @@
     { struct: "tl"
       type:   "req_rsp"
       name:   "tl_keymgr_dpe"
-      act:    "req"
-      package: "tlul_pkg"
-    }
-    { struct: "tl"
-      type:   "req_rsp"
-      name:   "tl_rv_core_ibex__cfg"
       act:    "req"
       package: "tlul_pkg"
     }

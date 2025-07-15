@@ -31,8 +31,6 @@ clk_rst_if clk_rst_if_main(.clk(clk_main), .rst_n(rst_n));
 wire clk_io_div4;
 clk_rst_if clk_rst_if_io_div4(.clk(clk_io_div4), .rst_n(rst_n));
 
-tl_if rv_core_ibex__corei_tl_if(clk_main, rst_n);
-tl_if rv_core_ibex__cored_tl_if(clk_main, rst_n);
 tl_if rv_dm__sba_tl_if(clk_main, rst_n);
 tl_if dma__host_tl_if(clk_main, rst_n);
 tl_if mbx0__sram_tl_if(clk_main, rst_n);
@@ -64,7 +62,6 @@ tl_if edn1_tl_if(clk_main, rst_n);
 tl_if rv_plic_tl_if(clk_main, rst_n);
 tl_if otbn_tl_if(clk_main, rst_n);
 tl_if keymgr_dpe_tl_if(clk_main, rst_n);
-tl_if rv_core_ibex__cfg_tl_if(clk_main, rst_n);
 tl_if sram_ctrl_main__regs_tl_if(clk_main, rst_n);
 tl_if sram_ctrl_main__ram_tl_if(clk_main, rst_n);
 tl_if sram_ctrl_mbox__regs_tl_if(clk_main, rst_n);
@@ -145,8 +142,6 @@ initial begin
     force tb.dut.top_darjeeling.u_xbar_dbg.rst_peri_ni = rst_n;
 
 `ifndef GATE_LEVEL
-    `DRIVE_CHIP_TL_HOST_IF(rv_core_ibex__corei, rv_core_ibex, corei_tl_h)
-    `DRIVE_CHIP_TL_HOST_IF(rv_core_ibex__cored, rv_core_ibex, cored_tl_h)
     `DRIVE_CHIP_TL_HOST_IF(rv_dm__sba, rv_dm, sba_tl_h)
     `DRIVE_CHIP_TL_DEVICE_IF(rv_dm__regs, rv_dm, regs_tl_d)
     `DRIVE_CHIP_TL_DEVICE_IF(rv_dm__mem, rv_dm, mem_tl_d)
@@ -166,7 +161,6 @@ initial begin
     `DRIVE_CHIP_TL_DEVICE_IF(rv_plic, rv_plic, tl)
     `DRIVE_CHIP_TL_DEVICE_IF(otbn, otbn, tl)
     `DRIVE_CHIP_TL_DEVICE_IF(keymgr_dpe, keymgr_dpe, tl)
-    `DRIVE_CHIP_TL_DEVICE_IF(rv_core_ibex__cfg, rv_core_ibex, cfg_tl_d)
     `DRIVE_CHIP_TL_DEVICE_IF(sram_ctrl_main__regs, sram_ctrl_main, regs_tl)
     `DRIVE_CHIP_TL_DEVICE_IF(sram_ctrl_main__ram, sram_ctrl_main, ram_tl)
     `DRIVE_CHIP_TL_DEVICE_IF(sram_ctrl_mbox__regs, sram_ctrl_mbox, regs_tl)

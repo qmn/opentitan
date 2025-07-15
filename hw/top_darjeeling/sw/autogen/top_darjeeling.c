@@ -16,7 +16,7 @@
  * `top_darjeeling_alert_peripheral_t`.
  */
 const top_darjeeling_alert_peripheral_t
-    top_darjeeling_alert_for_peripheral[105] = {
+    top_darjeeling_alert_for_peripheral[101] = {
   [kTopDarjeelingAlertIdUart0FatalFault] = kTopDarjeelingAlertPeripheralUart0,
   [kTopDarjeelingAlertIdGpioFatalFault] = kTopDarjeelingAlertPeripheralGpio,
   [kTopDarjeelingAlertIdSpiDeviceFatalFault] = kTopDarjeelingAlertPeripheralSpiDevice,
@@ -118,10 +118,6 @@ const top_darjeeling_alert_peripheral_t
   [kTopDarjeelingAlertIdRaclCtrlRecovCtrlUpdateErr] = kTopDarjeelingAlertPeripheralRaclCtrl,
   [kTopDarjeelingAlertIdAcRangeCheckRecovCtrlUpdateErr] = kTopDarjeelingAlertPeripheralAcRangeCheck,
   [kTopDarjeelingAlertIdAcRangeCheckFatalFault] = kTopDarjeelingAlertPeripheralAcRangeCheck,
-  [kTopDarjeelingAlertIdRvCoreIbexFatalSwErr] = kTopDarjeelingAlertPeripheralRvCoreIbex,
-  [kTopDarjeelingAlertIdRvCoreIbexRecovSwErr] = kTopDarjeelingAlertPeripheralRvCoreIbex,
-  [kTopDarjeelingAlertIdRvCoreIbexFatalHwErr] = kTopDarjeelingAlertPeripheralRvCoreIbex,
-  [kTopDarjeelingAlertIdRvCoreIbexRecovHwErr] = kTopDarjeelingAlertPeripheralRvCoreIbex,
 };
 
 /**

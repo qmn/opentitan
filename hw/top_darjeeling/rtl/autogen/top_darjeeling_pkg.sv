@@ -532,16 +532,6 @@ package top_darjeeling_pkg;
   parameter int unsigned TOP_DARJEELING_SOC_DBG_CTRL_CORE_SIZE_BYTES = 32'h20;
 
   /**
-   * Peripheral base address for cfg device on rv_core_ibex in top darjeeling.
-   */
-  parameter int unsigned TOP_DARJEELING_RV_CORE_IBEX_CFG_BASE_ADDR = 32'h211F0000;
-
-  /**
-   * Peripheral size in bytes for cfg device on rv_core_ibex in top darjeeling.
-   */
-  parameter int unsigned TOP_DARJEELING_RV_CORE_IBEX_CFG_SIZE_BYTES = 32'h800;
-
-  /**
    * Memory base address for ctn in top darjeeling.
    */
   parameter int unsigned TOP_DARJEELING_CTN_BASE_ADDR = 32'h40000000;
@@ -658,7 +648,6 @@ package top_darjeeling_pkg;
     TopDarjeelingAlertPeripheralSocDbgCtrl = 41,
     TopDarjeelingAlertPeripheralRaclCtrl = 42,
     TopDarjeelingAlertPeripheralAcRangeCheck = 43,
-    TopDarjeelingAlertPeripheralRvCoreIbex = 44,
     TopDarjeelingAlertPeripheralCount
   } alert_peripheral_e;
 
@@ -765,10 +754,6 @@ package top_darjeeling_pkg;
     TopDarjeelingAlertIdRaclCtrlRecovCtrlUpdateErr = 98,
     TopDarjeelingAlertIdAcRangeCheckRecovCtrlUpdateErr = 99,
     TopDarjeelingAlertIdAcRangeCheckFatalFault = 100,
-    TopDarjeelingAlertIdRvCoreIbexFatalSwErr = 101,
-    TopDarjeelingAlertIdRvCoreIbexRecovSwErr = 102,
-    TopDarjeelingAlertIdRvCoreIbexFatalHwErr = 103,
-    TopDarjeelingAlertIdRvCoreIbexRecovHwErr = 104,
     TopDarjeelingAlertIdCount
   } alert_id_e;
 
@@ -1188,7 +1173,6 @@ package top_darjeeling_pkg;
     PeripheralRomCtrl0,
     PeripheralRomCtrl1,
     PeripheralRstmgrAon,
-    PeripheralRvCoreIbex,
     PeripheralRvDm,
     PeripheralRvPlic,
     PeripheralRvTimer,

@@ -105,7 +105,3 @@ assign alert_if[97].alert_tx = `CHIP_HIER.u_racl_ctrl.alert_tx_o[0];
 assign alert_if[98].alert_tx = `CHIP_HIER.u_racl_ctrl.alert_tx_o[1];
 assign alert_if[99].alert_tx = `CHIP_HIER.u_ac_range_check.alert_tx_o[0];
 assign alert_if[100].alert_tx = `CHIP_HIER.u_ac_range_check.alert_tx_o[1];
-assign alert_if[101].alert_tx = `CHIP_HIER.u_rv_core_ibex.alert_tx_o[0];
-assign alert_if[102].alert_tx = `CHIP_HIER.u_rv_core_ibex.alert_tx_o[1];
-assign alert_if[103].alert_tx = `CHIP_HIER.u_rv_core_ibex.alert_tx_o[2];
-assign alert_if[104].alert_tx = `CHIP_HIER.u_rv_core_ibex.alert_tx_o[3];
