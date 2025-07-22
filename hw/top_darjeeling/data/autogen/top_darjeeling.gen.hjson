@@ -446,7 +446,7 @@
       }
     ]
   }
-  num_cores: "0"
+  num_cores: "1"
   interrupts:
   {
     default_plic: rv_plic
@@ -510,6 +510,7 @@
             mbx_jtag.core
             mbx_pcie0.core
             mbx_pcie1.core
+            rv_core_ibex
           ]
         }
       ]
@@ -1208,7 +1209,7 @@
           randcount: 40
           randtype: data
           name_top: RndCnstOtpCtrlLfsrSeed
-          default: 0xcda9a5fceb
+          default: 0x58fa9063ce
           randwidth: 40
         }
         {
@@ -1218,7 +1219,7 @@
           randcount: 40
           randtype: perm
           name_top: RndCnstOtpCtrlLfsrPerm
-          default: 0x5ca7514df48895654290c14125e01884e99c12364f2d40c719b8903676a0
+          default: 0x2dd6809079e67935a195848e7ca5065c47018d980335588c44f1494026c8
           randwidth: 240
         }
         {
@@ -1228,7 +1229,7 @@
           randcount: 256
           randtype: data
           name_top: RndCnstOtpCtrlScrmblKeyInit
-          default: 0x58fa9063ce216c0b412615d73f476529a96a1a8aca4b0bdcbe6b240c31095162
+          default: 0xe34f64ce978305bfc3481a2162ea2792b7508f1eab067af954dda5491439a9dd
           randwidth: 256
         }
       ]
@@ -1402,12 +1403,10 @@
           width: 4
           default: "'0"
           inst_name: otp_ctrl
-          end_idx: 3
-          top_type: partial-one-to-N
+          end_idx: -1
+          top_type: one-to-N
           top_signame: otp_ctrl_sram_otp_key
           index: -1
-          external: true
-          conn_type: true
         }
         {
           name: otbn_otp_key
@@ -1841,7 +1840,7 @@
           randcount: 128
           randtype: data
           name_top: RndCnstLcCtrlLcKeymgrDivInvalid
-          default: 0xe41bf99b2bc41e9edbb4685f7eb27eb3
+          default: 0xe6320801fdcf25a4fba528399117069e
           randwidth: 128
         }
         {
@@ -1851,7 +1850,7 @@
           randcount: 128
           randtype: data
           name_top: RndCnstLcCtrlLcKeymgrDivTestUnlocked
-          default: 0xb35f352752e34f64ce978305bfc3481a
+          default: 0x77c887f53dda6fb4ef8758b99027b6aa
           randwidth: 128
         }
         {
@@ -1861,7 +1860,7 @@
           randcount: 128
           randtype: data
           name_top: RndCnstLcCtrlLcKeymgrDivDev
-          default: 0x2162ea2792b7508f1eab067af954dda5
+          default: 0x7468bc0bd8d70368e7cfb11a99675b14
           randwidth: 128
         }
         {
@@ -1871,7 +1870,7 @@
           randcount: 128
           randtype: data
           name_top: RndCnstLcCtrlLcKeymgrDivProduction
-          default: 0x491439a9dde6320801fdcf25a4fba528
+          default: 0x6240619335a9e2d123834d18744778be
           randwidth: 128
         }
         {
@@ -1881,7 +1880,7 @@
           randcount: 128
           randtype: data
           name_top: RndCnstLcCtrlLcKeymgrDivRma
-          default: 0x399117069e77c887f53dda6fb4ef8758
+          default: 0x5e63c087e36838b56b1a45f6fd312f53
           randwidth: 128
         }
         {
@@ -1891,7 +1890,7 @@
           randcount: 1024
           randtype: data
           name_top: RndCnstLcCtrlInvalidTokens
-          default: 0xb99027b6aa7468bc0bd8d70368e7cfb11a99675b146240619335a9e2d123834d18744778be5e63c087e36838b56b1a45f6fd312f5353fa7b2ce9fc83ddaf1dd8c5a42e2ad24fa02221b6ff5aad7a9c09d5d9fdd1cfcf512835c0cfae2ed0c69fa488685cea9bc1c89bfb7399aef5c6eb5d6e4e23416a0aa6d7ac7ec9c3304470
+          default: 0x53fa7b2ce9fc83ddaf1dd8c5a42e2ad24fa02221b6ff5aad7a9c09d5d9fdd1cfcf512835c0cfae2ed0c69fa488685cea9bc1c89bfb7399aef5c6eb5d6e4e23416a0aa6d7ac7ec9c3304470fbe505f9649400ca9864fd4ce49d2cfc6ecc102540ead8734700a5207132689471aa822bc51cdd4d37ac2d246c4264f37ec1982017
           randwidth: 1024
         }
         {
@@ -1980,7 +1979,7 @@
           inst_name: lc_ctrl
           default: ""
           top_signame: alert_handler_esc_tx
-          index: 0
+          index: 1
         }
         {
           name: esc_scrap_state0_rx
@@ -1992,7 +1991,7 @@
           inst_name: lc_ctrl
           default: ""
           top_signame: alert_handler_esc_rx
-          index: 0
+          index: 1
         }
         {
           name: esc_scrap_state1_tx
@@ -2004,7 +2003,7 @@
           inst_name: lc_ctrl
           default: ""
           top_signame: alert_handler_esc_tx
-          index: 1
+          index: 2
         }
         {
           name: esc_scrap_state1_rx
@@ -2016,7 +2015,7 @@
           inst_name: lc_ctrl
           default: ""
           top_signame: alert_handler_esc_rx
-          index: 1
+          index: 2
         }
         {
           name: pwr_lc
@@ -2170,9 +2169,9 @@
           width: 1
           default: lc_ctrl_pkg::Off
           inst_name: lc_ctrl
-          external: true
-          top_signame: rv_core_ibex.lc_cpu_en
-          conn_type: false
+          end_idx: -1
+          top_type: broadcast
+          top_signame: lc_ctrl_lc_cpu_en
           index: -1
         }
         {
@@ -2493,7 +2492,7 @@
           randcount: 32
           randtype: data
           name_top: RndCnstAlertHandlerLfsrSeed
-          default: 0xfbe505f9
+          default: 0x94adda1b
           randwidth: 32
         }
         {
@@ -2503,7 +2502,7 @@
           randcount: 32
           randtype: perm
           name_top: RndCnstAlertHandlerLfsrPerm
-          default: 0x7ea97f41618db8619eaaee1c8209a5da7f3c824c
+          default: 0x2c7c7806d8fe46f651c95dc1b36ba44554de4e42
           randwidth: 160
         }
         {
@@ -2562,12 +2561,10 @@
           width: 4
           inst_name: alert_handler
           default: ""
-          end_idx: 3
-          top_type: partial-one-to-N
+          end_idx: -1
+          top_type: one-to-N
           top_signame: alert_handler_esc_rx
           index: -1
-          external: true
-          conn_type: true
         }
         {
           name: esc_tx
@@ -2578,12 +2575,10 @@
           width: 4
           inst_name: alert_handler
           default: ""
-          end_idx: 3
-          top_type: partial-one-to-N
+          end_idx: -1
+          top_type: one-to-N
           top_signame: alert_handler_esc_tx
           index: -1
-          external: true
-          conn_type: true
         }
         {
           name: tl
@@ -2920,7 +2915,7 @@
           inst_name: pwrmgr_aon
           default: ""
           top_signame: alert_handler_esc_tx
-          index: 2
+          index: 3
         }
         {
           name: esc_rst_rx
@@ -2932,7 +2927,7 @@
           inst_name: pwrmgr_aon
           default: ""
           top_signame: alert_handler_esc_rx
-          index: 2
+          index: 3
         }
         {
           name: pwr_cpu
@@ -2943,9 +2938,7 @@
           width: 1
           inst_name: pwrmgr_aon
           default: ""
-          external: true
-          top_signame: rv_core_ibex.pwrmgr
-          conn_type: false
+          top_signame: rv_core_ibex_pwrmgr
           index: -1
         }
         {
@@ -3039,9 +3032,9 @@
           width: 1
           inst_name: pwrmgr_aon
           default: ""
-          external: true
-          top_signame: rv_core_ibex.pwrmgr_cpu_en
-          conn_type: false
+          end_idx: -1
+          top_type: broadcast
+          top_signame: pwrmgr_aon_fetch_en
           index: -1
         }
         {
@@ -3265,9 +3258,7 @@
           width: 1
           inst_name: rstmgr_aon
           default: ""
-          external: true
-          top_signame: rv_core_ibex.crash_dump
-          conn_type: false
+          top_signame: rv_core_ibex_crash_dump
           index: -1
         }
         {
@@ -3775,9 +3766,9 @@
           default: 1'b0
           inst_name: aon_timer_aon
           package: ""
-          external: true
-          top_signame: rv_core_ibex_nmi_wdog
-          conn_type: false
+          end_idx: -1
+          top_type: broadcast
+          top_signame: aon_timer_aon_nmi_wdog_timer_bark
           index: -1
         }
         {
@@ -4434,7 +4425,7 @@
           randcount: 128
           randtype: data
           name_top: RndCnstSramCtrlRetAonSramKey
-          default: 0x246c4264f37ec198201794adda1b1692
+          default: 0x21d8cb69d4f3a15faf834cad515d76bd
           randwidth: 128
         }
         {
@@ -4444,7 +4435,7 @@
           randcount: 128
           randtype: data
           name_top: RndCnstSramCtrlRetAonSramNonce
-          default: 0x9df5e06a56aaded443259ffb5736dd68
+          default: 0x37c7bec5f33fdca11a72dc05a2313b71
           randwidth: 128
         }
         {
@@ -4454,7 +4445,7 @@
           randcount: 64
           randtype: data
           name_top: RndCnstSramCtrlRetAonLfsrSeed
-          default: 0x1215b98e162dcc0
+          default: 0x8e6d6dbb8ec647d1
           randwidth: 64
         }
         {
@@ -4464,7 +4455,7 @@
           randcount: 64
           randtype: perm
           name_top: RndCnstSramCtrlRetAonLfsrPerm
-          default: 0xe2ac3b983855bd0b2d0a56636d210a1c08895b161fd1effd93cf817063cdcae51382b5e86b7d45a5d236cf944b3ba327
+          default: 0xb7742874b52317695c3cdd614d1c1702a7ef13bf561e078a9826ccac36bc9e9b9988623193efc9e7254ed330584bab38
           randwidth: 384
         }
         {
@@ -4952,9 +4943,9 @@
           inst_name: rv_dm
           default: ""
           package: ""
-          external: true
-          top_signame: rv_core_ibex.debug_req
-          conn_type: false
+          end_idx: -1
+          top_type: broadcast
+          top_signame: rv_dm_debug_req
           index: -1
         }
         {
@@ -5148,9 +5139,9 @@
           inst_name: rv_plic
           default: ""
           package: ""
-          external: true
-          top_signame: rv_core_ibex.irq_external
-          conn_type: false
+          end_idx: -1
+          top_type: broadcast
+          top_signame: rv_plic_irq
           index: -1
         }
         {
@@ -5171,9 +5162,9 @@
           inst_name: rv_plic
           default: ""
           package: ""
-          external: true
-          top_signame: rv_core_ibex.irq_software
-          conn_type: false
+          end_idx: -1
+          top_type: broadcast
+          top_signame: rv_plic_msip
           index: -1
         }
         {
@@ -5317,7 +5308,7 @@
           randcount: 64
           randtype: data
           name_top: RndCnstAesClearingLfsrSeed
-          default: 0xdf6a55f0d23bb7dc
+          default: 0x2482cc34468c37bf
           randwidth: 64
         }
         {
@@ -5327,7 +5318,7 @@
           randcount: 64
           randtype: perm
           name_top: RndCnstAesClearingLfsrPerm
-          default: 0x3875e86196a6b9d9d3a5b3fbe042de8fe1764300a1af2b4119c939360cd4aaff3f496d4c7ca97dde223a01156cd09c43
+          default: 0x57677e4b32baaafaf9e2c13099a62759b8bcfde7f5d219714ce9012293d9a10b8d0095f28d42d18031771fd32d08673b
           randwidth: 384
         }
         {
@@ -5337,7 +5328,7 @@
           randcount: 64
           randtype: perm
           name_top: RndCnstAesClearingSharePerm
-          default: 0x76b2231d488f580dc16307cdc7e56ed3aa939af33f29bb49f0e9255c52da0d9f42d767b2e3946ced01334a0a069dc869
+          default: 0x1c841ed1bb4e7f8222eab3a08f24aadb3adc36f31d67c977e44d069ebc3105365638747a68f8c1949968d9cd5dfd212
           randwidth: 384
         }
         {
@@ -5347,7 +5338,7 @@
           randcount: 288
           randtype: data
           name_top: RndCnstAesMaskingLfsrSeed
-          default: 0x4fb06b9ea47dbf441aa625f5ddf2dcb03c2b867024d54654c6e64e7aac13cb5dd2f3ddbb
+          default: 0x36270315f91066fb63a6e6eb54493c0631cd3062adf6d00b7e756f81353c10ac316a9c7a
           randwidth: 288
         }
         {
@@ -5357,7 +5348,7 @@
           randcount: 160
           randtype: perm
           name_top: RndCnstAesMaskingLfsrPerm
-          default: 0x503d686108074c743356290c6d16323491532b2f181f4879172d990d3a0f609e202e8b5f6b808e414f058909397c1b0e73464a4b92025587434569968a124e9f253f867b6c19574d5993902c6e67981388651d72479d8c233e22703b8438421c515b7f01780a8376855c249b522a58115e213700267d1e4004449c82149a1a777a6a8d948f35816f757e0b623031063c4954636610150327365a955d64719728
+          default: 0x9107678e8f0118524a1a5a0e9f544d2a5e69054f5380264171333a0d5f0f7e1b57616a3911970b42566402308c832d6d9d84776c121c3b864b8b731f2e595c48452f3d51407b829b7c080c94278735755b28786595898d8a049368321606179c50253f24317a4e19235d7f72921096902c3e1e6636135815740a1d37476f216260467d44767970853899039a1420986b495522436e004c9e3c81098863292b34
           randwidth: 1280
         }
       ]
@@ -5632,7 +5623,7 @@
           randcount: 288
           randtype: data
           name_top: RndCnstKmacLfsrSeed
-          default: 0x452480a61092e8a80cdf267889e06a8a1ab5f6db8158aa7c98ddec2834fdd68225ac00e6
+          default: 0xfd7f6334613aa93b656444d70350a89ebc0cfbd0a03925fc80535f277451d2be0c46fdd2
           randwidth: 288
         }
         {
@@ -5642,7 +5633,7 @@
           randcount: 800
           randtype: perm
           name_top: RndCnstKmacLfsrPerm
-          default: 0xa2269242199b14c0d6f316e1a90057190d034d1f02e4676d8a4b70b3f9946a0768e15649d5d14423a9e5a0bd47472d05db04226e1c487fbe8498d8339bd879ac9fbf2679fb1d1357b9b4719486705eb25797f6c87510150838a47e6d1b728b4e23d25182b9545bc50c760419281a2b4db68981baea93e1ba84cb2166684771cbbc385344bb68b9814ec4893932abcc7c55c605ead2fb5cc60b5a249347279f1383e65668636a4f48c6f6aa9208a8ce6806d616662a535171666d6ec7f1dca55bf560f9276b671d347f52a68c70296b1368bf3f0197fc54088e34cdb674b11140471e989909623a062bd3199cdcc991e185025c188e736bd26c3f86d52a66dead47956516052b7895c6a682a0ae8da29e624d3c91cee72c1ebaa2d9f47bc34842ddde43e22abf020d90a9064987dfbba2977a4301bacdb0f0855192092c2086a080cccb02854c5cf6bd0b39a4378c9e00aca1b2ba7895c21ad28c8d8199c47bcab9886face5f01c37664fabfd2689e093b43c1ddc32085a04820aecfd17e266b906422e07223fa455b03e3e729658a1834da3a9b9741325e55557a52ceafdb8837145924c738f27d83a5f68282e484926abdee78a650014e411a90751095e03d1a9ad6721ec6c524b31770a1169103b747c5a5a59c97722826886a33cd5a6a8a1580a25bd3f9e45350b15638b47aa9b2a14e7e9e546123c00d44540a4f48c518af5f869b06d7112a852d861144313ef2832d5018c2401d5700d73187e07d37bf967822a63aadb96caa985684956b1770f2669f6eef80ec329ecefaaeedc591293a06afae4b1465be52e53d512201175a711d1a1a18036799322c4e3894109e9c062340a6043357265c98055ed5c5b12559d1870c3c58d2ba772c27c8412b7acb5801d96424bbf4cb7d47d77d884a16aac104485f39d623b50fb3828c298d5465d30700c316e27a28364698c04e18f10d971bdb7e87004f6a785670487259d7010a04a41ba101d20d5fb3292b1c80a86b90231a80a814be5d9c1530d293025be46930520be450d2aba18b4de0366898c16e950e73ddee85a7f478dc394ff5b65662c8d9e144c24a7128cf21458791f1848c385df0ab43e4425391091525bc002155e5ab876e97431e93cf06d039344eb91660b2e553d563311073022b7b0ba8709ac2ad88b0782c5ac04105038d6b3d9898d0e72659a942cc38e9b1ae34ed3a829f405a516dcc7b66332d8c17f9a7775f8b9980324bd880df45e742b2ee5d6f54048fa3a395e9115b22e8ee7667df24c9b3120132ec42270812f02eab0737691b4f9f7375a66c20765892322373786828eb8502c4714b863cb350c2dc0d02c1ec966e96c15615c258a3e9d8bc28b20317457c80497a02f0a880d44d95a9184632359eb101adb995d4a
+          default: 0x62a473f8e39c84bb85a51ae7857664535593e4516657f9ec35bd632631ef05d97c75c393841a787913690b8ac6bed552a47265714badc7b1ed1892fc96d1c0e13443ed20680d63a345d83317a5ec171f8d63da2ede924db3a11fc6c674293c8345955c2b96a797a6893b2cab542781a141921326dce02f0649af9700b98a5e6692fe4ccbf6e414086e9aea195e2f61d857c00759882f61173aa1de7444018291708a407a0cbb836aa8256da7a2416527d27252463420b51e817f0ee2b6700fd166ea85bfe081c587901e2841204e6712962256c49c405b328233f1350627db9463b162d879e1899d28fa3abca6a6e06dbaa2348b0f9205c5f2b343172c2c6e76d3833a3fc4e28615a06a954b73031c0dac649399dfd3e1d59fc24064f4150222d47b57ac22ca056c8b7762d6142f0590471e9a34ac84a5462529ada7c8e649cd2767e1fd9d79d58156b50c552ab5ae53089948d37fef8333179a1457adca42d1d399665589e0098d1b2cdb3eb9a6c865424236066998982aeda1bc61054070decb3eaddb7d2d60da23b43c1dda92085a04820b38fd17e36aed06422f4a6243a4ea403e99c25745ee386713692e806044c8961ab9aa79acae7523144ee4975ea3c8f10eb1573182af1249f30cb42b79840539046a8e1f5f5098443d1a9cf5c5c8c20299a4524b1fa906a171903bc47c5a5bf8a97722826abeb63cd5a710a1580a26256f4fd9489e03509af6a0b4336ae2a14e2c23c461236d4d44540a4f48c518af5f869b5095111e552d861144313f0786e8801a0940283a11dc35cc61f81f4ddcbac1677ee753aaef9b0aa9cd684960e17497266b26ef0d0ec32a34efafb019291297ded7e5f6b6065c392e53d5122011759b11d1a1a80036799322e0f38941139620c0538119a4c42a4a8c278d5c9bf115ae00765909731232df51f5df621285aac3411217ce879424c3ece09dca63551974c1c8840c316bf7a316646abaa4e19350d9b5bdbce9a004f6ac45670487259d7010a04a41ba5c1dba08357ee0af686202b4b3008a8a02a512f9ba8254c34a98096f91a4c1482f91434ac1862e7780d9a72305ba5439cf77ba16a491e994dc394ff5b65662c8da2944c78a7128cf21458791f1848c385df0b003e4425391091525bc0028c855796ae1dbf5d095e4f3c1b40e4d13ae45982d7954f558cc441cc08adec2ea1c26adbbb22c1e0b16b0104140e35ae366263439c9966a50b2013a6d9bdd3b4ea0a7d016945b731eed8ccb6305fe69ddd7e2fa600c92f62037d179d0acb4f025d70a4048fa3a395e9115b22e8ee7667df24c9b3120132ec42270812f02eab0737691b4f9f7375a66c207658923223737b041a0a3ae140b11c52e18f2cd430b71840b1cb259ba5b1a585709628fa762f0a2c8
           randwidth: 8000
         }
         {
@@ -5652,7 +5643,7 @@
           randcount: 800
           randtype: data
           name_top: RndCnstKmacBufferLfsrSeed
-          default: 0x2246562dcceda3a423366a8096b121fa42246b6c385a5aa3b4fe9c0a8d1f2128e03e0b01632e027e34c81340bcfd0fd53473b5440b76763b45bca8166865fdaf59f386d5174cc7f5fd1f544b3a82c54e1481730f66854723d00560945b6c126ffec03bf1
+          default: 0x82c54e1481730f66854723d00560945b6c126ffec03bf1a985028fae5eca762b77b0aaa69486cff6100543fa654b771979a70dde33ff89cf0ed4d484bcbd6b2ae72e35145b5f97c0e9b65e98cea48c3df219340a563da5b6396fce53002a2961ac84bdda
           randwidth: 800
         }
         {
@@ -5662,7 +5653,7 @@
           randcount: 64
           randtype: perm
           name_top: RndCnstKmacMsgPerm
-          default: 0xb9c2273f03a025ff456fab7c566bf4e474544fb598d7390234bddac6888c0de1b649940113e969fece0a7725eb8c086a
+          default: 0xc955307f8181637fe30d17bc5fd019b8bd6076649bd903930a1256207cccfaf2aae4da6d6ac9e47223f1ebb968d2b144
           randwidth: 384
         }
       ]
@@ -5856,7 +5847,7 @@
           randcount: 256
           randtype: data
           name_top: RndCnstOtbnUrndPrngSeed
-          default: 0xf8a394a094c63c8af070919cd8b168cab6a734a2a92b34ba17c531911e20c1a4
+          default: 0xa575b899b4caae056cf2b85353e1a33975e7b1209b868a4acd919ed9795d5f51
           randwidth: 256
         }
         {
@@ -5894,7 +5885,7 @@
           randcount: 128
           randtype: data
           name_top: RndCnstOtbnOtbnKey
-          default: 0x96592784ac089e72877bdaf9f7954486
+          default: 0x9aa8cd47ac68b65650a1bb5a4a6dbf0b
           randwidth: 128
         }
         {
@@ -5904,7 +5895,7 @@
           randcount: 64
           randtype: data
           name_top: RndCnstOtbnOtbnNonce
-          default: 0x164b58ea68f9b7f6
+          default: 0xc7c1c7af8402bacd
           randwidth: 64
         }
       ]
@@ -6138,7 +6129,7 @@
           randcount: 64
           randtype: data
           name_top: RndCnstKeymgrDpeLfsrSeed
-          default: 0x47cdafc1c9a905a7
+          default: 0x250ed8960c88b4b1
           randwidth: 64
         }
         {
@@ -6148,7 +6139,7 @@
           randcount: 64
           randtype: perm
           name_top: RndCnstKeymgrDpeLfsrPerm
-          default: 0xdfc0e31dc106c7301a9ece4cbd726063858dba46554f47f27928a122d3bad9b06b99da7f091d7028bf9094fa05f7b52a
+          default: 0xa3fb9af729349f5d820605b362d23a1ac4993dcdd3e0e35de4510af171c08cc5150e2271c0bee942f6fe966ad17a1a9f
           randwidth: 384
         }
         {
@@ -6158,7 +6149,7 @@
           randcount: 32
           randtype: perm
           name_top: RndCnstKeymgrDpeRandPerm
-          default: 0x3f4d14a962f0303766ec09345b538ddca7f43e15
+          default: 0x6f92165b3355778fdd0678f9470ba75c8b08809a
           randwidth: 160
         }
         {
@@ -6168,7 +6159,7 @@
           randcount: 256
           randtype: data
           name_top: RndCnstKeymgrDpeRevisionSeed
-          default: 0x6e77b99bf0a1bcd67fb8941c331a44277bc08f711d2d33e72bc40a36399d8364
+          default: 0xb6ee6e7ad485ff3ca72c2242223ce6d70f17b4f4b32818aa49d125b4defb1f3c
           randwidth: 256
         }
         {
@@ -6178,7 +6169,7 @@
           randcount: 256
           randtype: data
           name_top: RndCnstKeymgrDpeSoftOutputSeed
-          default: 0xdcd59508d525078e802f91d8583804fde71271f1738c1cac987a6b8a7758b762
+          default: 0xbe8a29be065c26d23550bbc139ff6461763d7e966a8a7219eb2e8ef9f11a152
           randwidth: 256
         }
         {
@@ -6188,7 +6179,7 @@
           randcount: 256
           randtype: data
           name_top: RndCnstKeymgrDpeHardOutputSeed
-          default: 0x216edd63070949c7834ab6ee6e7ad485ff3ca72c2242223ce6d70f17b4f4b328
+          default: 0xe6c71aa23b8864416e750c01a3339c6c7aa11244ecd28a62cb1b851078c2a5f1
           randwidth: 256
         }
         {
@@ -6198,7 +6189,7 @@
           randcount: 256
           randtype: data
           name_top: RndCnstKeymgrDpeAesSeed
-          default: 0x18aa49d125b4defb1f3c0be8a29be065c26d23550bbc139ff6461763d7e966a8
+          default: 0x8eee28d0b562043b7312efad871f92e7527da865d661281fe98dfcd72e3c6d15
           randwidth: 256
         }
         {
@@ -6208,7 +6199,7 @@
           randcount: 256
           randtype: data
           name_top: RndCnstKeymgrDpeKmacSeed
-          default: 0xa7219eb2e8ef9f11a152e6c71aa23b8864416e750c01a3339c6c7aa11244ecd2
+          default: 0xa85d63009596f7966c5c68caedde4ab7c65fb8d59618284064d7194e4707ada
           randwidth: 256
         }
         {
@@ -6218,7 +6209,7 @@
           randcount: 256
           randtype: data
           name_top: RndCnstKeymgrDpeOtbnSeed
-          default: 0x8a62cb1b851078c2a5f18eee28d0b562043b7312efad871f92e7527da865d661
+          default: 0x81f8a6db14ca845beee60798289ad4fb0df1768296390152700e078ec5a951b6
           randwidth: 256
         }
         {
@@ -6228,7 +6219,7 @@
           randcount: 256
           randtype: data
           name_top: RndCnstKeymgrDpeNoneSeed
-          default: 0x281fe98dfcd72e3c6d150a85d63009596f7966c5c68caedde4ab7c65fb8d5961
+          default: 0x27cf2ccd155d84fdaced736e93362c8da83c5f4dd2093e4d2a70dd99dcf4ccac
           randwidth: 256
         }
       ]
@@ -6432,7 +6423,7 @@
           randcount: 384
           randtype: data
           name_top: RndCnstCsrngCsKeymgrDivNonProduction
-          default: 0x8284064d7194e4707ada81f8a6db14ca845beee60798289ad4fb0df1768296390152700e078ec5a951b627cf2ccd155d
+          default: 0x341a2f1a2704f5e21287fa168af251b370d034cda605152662f4d11b3245d5943ea5fd2e4bea016b7911deaf01df7425
           randwidth: 384
         }
         {
@@ -6442,7 +6433,7 @@
           randcount: 384
           randtype: data
           name_top: RndCnstCsrngCsKeymgrDivProduction
-          default: 0x84fdaced736e93362c8da83c5f4dd2093e4d2a70dd99dcf4ccac341a2f1a2704f5e21287fa168af251b370d034cda605
+          default: 0x47371445d6e3955145e3074d9ca9e8a4ef06a6f14a5c8fcac0d6396e606a620a9ffb23756bda420a9e7bd1a7c41e3a37
           randwidth: 384
         }
         {
@@ -6966,12 +6957,10 @@
           width: 8
           default: "'0"
           inst_name: edn0
-          end_idx: 6
+          end_idx: 7
           top_type: partial-one-to-N
           top_signame: edn0_edn
           index: -1
-          external: true
-          conn_type: true
         }
         {
           name: tl
@@ -7150,7 +7139,7 @@
           randcount: 128
           randtype: data
           name_top: RndCnstSramCtrlMainSramKey
-          default: 0x152662f4d11b3245d5943ea5fd2e4bea
+          default: 0xb747d3d7b758b37d1d1ca19a079c48d7
           randwidth: 128
         }
         {
@@ -7160,7 +7149,7 @@
           randcount: 128
           randtype: data
           name_top: RndCnstSramCtrlMainSramNonce
-          default: 0x16b7911deaf01df742547371445d6e3
+          default: 0xd4e67100a6aaebe45b6f09aefb72895e
           randwidth: 128
         }
         {
@@ -7170,7 +7159,7 @@
           randcount: 64
           randtype: data
           name_top: RndCnstSramCtrlMainLfsrSeed
-          default: 0x955145e3074d9ca9
+          default: 0xc90d876315db9ad8
           randwidth: 64
         }
         {
@@ -7180,7 +7169,7 @@
           randcount: 64
           randtype: perm
           name_top: RndCnstSramCtrlMainLfsrPerm
-          default: 0x839f7f3c512a2a1af31add8c8b867c90b56872526c01350399f5913741debaf4317489c2dda61b3b5c328d74be07ba7a
+          default: 0xd58134893911fa70a6380e0b53a19676dfdf5db42966a81a0c857c16572c376052c077afecadf1f61ae88c9333c8fe6e
           randwidth: 384
         }
         {
@@ -7477,7 +7466,7 @@
           randcount: 128
           randtype: data
           name_top: RndCnstSramCtrlMboxSramKey
-          default: 0x29bd781efe2b4b06f4b349e0372b7394
+          default: 0xc9adde7bfb79fb9cc4c0b2d1aed6700a
           randwidth: 128
         }
         {
@@ -7487,7 +7476,7 @@
           randcount: 128
           randtype: data
           name_top: RndCnstSramCtrlMboxSramNonce
-          default: 0xd415d937f3578cc1200dd1fb1d0ecf94
+          default: 0x44ea3e7e0610a663d52b082b9aef0e42
           randwidth: 128
         }
         {
@@ -7497,7 +7486,7 @@
           randcount: 64
           randtype: data
           name_top: RndCnstSramCtrlMboxLfsrSeed
-          default: 0x8594bc831c3e0e1f
+          default: 0x6df4866fe88a8baa
           randwidth: 64
         }
         {
@@ -7507,7 +7496,7 @@
           randcount: 64
           randtype: perm
           name_top: RndCnstSramCtrlMboxLfsrPerm
-          default: 0x392500f4625987fc175bb8f4ae86ec565810348753a6215ae4405f3d1ddc9ea7b8bb31fc90b2bad43b42c7662ffa6c8c
+          default: 0x313255020282c197b789fb87992c785a8ea335a9c81b3474bdc76b921daa054cbd103f186e542cecfb75e6917e5cbfce
           randwidth: 384
         }
         {
@@ -7803,7 +7792,7 @@
           randcount: 64
           randtype: data
           name_top: RndCnstRomCtrl0ScrNonce
-          default: 0x435205ef40d4b50c
+          default: 0x37bebb1d8879e257
           randwidth: 64
         }
         {
@@ -7813,7 +7802,7 @@
           randcount: 128
           randtype: data
           name_top: RndCnstRomCtrl0ScrKey
-          default: 0xbd86b4932d75cebe7060738efa203541
+          default: 0x23b9d533238865874ef2d375583c209c
           randwidth: 128
         }
         {
@@ -7989,7 +7978,7 @@
           randcount: 64
           randtype: data
           name_top: RndCnstRomCtrl1ScrNonce
-          default: 0x8082cfe96e5cc128
+          default: 0x27d35c5794f680b
           randwidth: 64
         }
         {
@@ -7999,7 +7988,7 @@
           randcount: 128
           randtype: data
           name_top: RndCnstRomCtrl1ScrKey
-          default: 0xfbe2f2e323688bcc7ecbb1a7db7be4c
+          default: 0x124893c22e6a22f5ad2e7591ecad6cca
           randwidth: 128
         }
         {
@@ -10846,6 +10835,765 @@
         "0"
       ]
     }
+    {
+      name: rv_core_ibex
+      type: rv_core_ibex
+      template_type: rv_core_ibex
+      attr: ipgen
+      ipgen_param:
+      {
+        NumRegions: 32
+      }
+      param_decl:
+      {
+        PMPEnable: "1"
+        PMPGranularity: "0"
+        PMPNumRegions: "16"
+        MHPMCounterNum: "10"
+        MHPMCounterWidth: "32"
+        PMPRstCfg: ibex_pmp_reset_pkg::PmpCfgRst
+        PMPRstAddr: ibex_pmp_reset_pkg::PmpAddrRst
+        PMPRstMsecCfg: ibex_pmp_reset_pkg::PmpMseccfgRst
+        RV32E: "0"
+        RV32M: ibex_pkg::RV32MSingleCycle
+        RV32B: ibex_pkg::RV32BOTEarlGrey
+        RegFile: ibex_pkg::RegFileFF
+        BranchTargetALU: "1"
+        WritebackStage: "1"
+        ICache: "1"
+        ICacheECC: "1"
+        ICacheScramble: "1"
+        BranchPredictor: "0"
+        DbgTriggerEn: "1"
+        DbgHwBreakNum: "4"
+        SecureIbex: "1"
+        DmBaseAddr: tl_main_pkg::ADDR_SPACE_RV_DM__MEM
+        DmAddrMask: tl_main_pkg::ADDR_MASK_RV_DM__MEM
+        DmHaltAddr: tl_main_pkg::ADDR_SPACE_RV_DM__MEM + dm::HaltAddress[31:0]
+        DmExceptionAddr: tl_main_pkg::ADDR_SPACE_RV_DM__MEM + dm::ExceptionAddress[31:0]
+        PipeLine: "1"
+        NEscalationSeverities: AlertHandlerEscNumSeverities
+        WidthPingCounter: AlertHandlerEscPingCountWidth
+      }
+      clock_srcs:
+      {
+        clk_i: main
+        clk_edn_i: main
+        clk_esc_i:
+        {
+          clock: io_div4
+          group: secure
+        }
+        clk_otp_i:
+        {
+          clock: io_div4
+          group: secure
+        }
+      }
+      clock_group: infra
+      reset_connections:
+      {
+        rst_ni:
+        {
+          name: lc
+          domain: "0"
+        }
+        rst_edn_ni:
+        {
+          name: lc
+          domain: "0"
+        }
+        rst_esc_ni:
+        {
+          name: lc_io_div4
+          domain: "0"
+        }
+        rst_otp_ni:
+        {
+          name: lc_io_div4
+          domain: "0"
+        }
+      }
+      clock_connections:
+      {
+        clk_i: clkmgr_aon_clocks.clk_main_infra
+        clk_edn_i: clkmgr_aon_clocks.clk_main_infra
+        clk_esc_i: clkmgr_aon_clocks.clk_io_div4_secure
+        clk_otp_i: clkmgr_aon_clocks.clk_io_div4_secure
+      }
+      memory: {}
+      param_list:
+      [
+        {
+          name: RndCnstLfsrSeed
+          desc: Default seed of the PRNG used for random instructions.
+          type: ibex_pkg::lfsr_seed_t
+          randcount: 32
+          randtype: data
+          name_top: RndCnstRvCoreIbexLfsrSeed
+          default: 0x220de3c0
+          randwidth: 32
+        }
+        {
+          name: RndCnstLfsrPerm
+          desc: Permutation applied to the LFSR of the PRNG used for random instructions.
+          type: ibex_pkg::lfsr_perm_t
+          randcount: 32
+          randtype: perm
+          name_top: RndCnstRvCoreIbexLfsrPerm
+          default: 0x3d1a8b4f92ee1c92c5f55ab77f30c2fe74124060
+          randwidth: 160
+        }
+        {
+          name: RndCnstIbexKeyDefault
+          desc: Default icache scrambling key
+          type: logic [ibex_pkg::SCRAMBLE_KEY_W-1:0]
+          randcount: 128
+          randtype: data
+          name_top: RndCnstRvCoreIbexIbexKeyDefault
+          default: 0xf2546ea845a7ade1002b84b739380023
+          randwidth: 128
+        }
+        {
+          name: RndCnstIbexNonceDefault
+          desc: Default icache scrambling nonce
+          type: logic [ibex_pkg::SCRAMBLE_NONCE_W-1:0]
+          randcount: 64
+          randtype: data
+          name_top: RndCnstRvCoreIbexIbexNonceDefault
+          default: 0xc25c3deaf38d871a
+          randwidth: 64
+        }
+        {
+          name: NEscalationSeverities
+          desc: Number of escalation severities
+          type: int unsigned
+          default: AlertHandlerEscNumSeverities
+          local: "false"
+          expose: "false"
+          name_top: RvCoreIbexNEscalationSeverities
+        }
+        {
+          name: WidthPingCounter
+          desc: Width of the ping counter
+          type: int unsigned
+          default: AlertHandlerEscPingCountWidth
+          local: "false"
+          expose: "false"
+          name_top: RvCoreIbexWidthPingCounter
+        }
+        {
+          name: PMPEnable
+          desc: Enable PMP
+          type: bit
+          default: "1"
+          local: "false"
+          expose: "true"
+          name_top: RvCoreIbexPMPEnable
+        }
+        {
+          name: PMPGranularity
+          desc: PMP Granularity
+          type: int unsigned
+          default: "0"
+          local: "false"
+          expose: "true"
+          name_top: RvCoreIbexPMPGranularity
+        }
+        {
+          name: PMPNumRegions
+          desc: PMP number of regions
+          type: int unsigned
+          default: "16"
+          local: "false"
+          expose: "true"
+          name_top: RvCoreIbexPMPNumRegions
+        }
+        {
+          name: MHPMCounterNum
+          desc: "Number of the MHPM counter "
+          type: int unsigned
+          default: "10"
+          local: "false"
+          expose: "true"
+          name_top: RvCoreIbexMHPMCounterNum
+        }
+        {
+          name: MHPMCounterWidth
+          desc: "Width of the MHPM Counter "
+          type: int unsigned
+          default: "32"
+          local: "false"
+          expose: "true"
+          name_top: RvCoreIbexMHPMCounterWidth
+        }
+        {
+          name: PMPRstCfg
+          desc: Reset value of PMP config CSRs
+          type: ibex_pkg::pmp_cfg_t
+          unpacked_dimensions: "[16]"
+          default: ibex_pmp_reset_pkg::PmpCfgRst
+          local: "false"
+          expose: "true"
+          name_top: RvCoreIbexPMPRstCfg
+        }
+        {
+          name: PMPRstAddr
+          desc: Reset value of PMP address CSRs
+          type: logic [33:0]
+          unpacked_dimensions: "[16]"
+          default: ibex_pmp_reset_pkg::PmpAddrRst
+          local: "false"
+          expose: "true"
+          name_top: RvCoreIbexPMPRstAddr
+        }
+        {
+          name: PMPRstMsecCfg
+          desc: Reset value of MSECCFG CSR
+          type: ibex_pkg::pmp_mseccfg_t
+          default: ibex_pmp_reset_pkg::PmpMseccfgRst
+          local: "false"
+          expose: "true"
+          name_top: RvCoreIbexPMPRstMsecCfg
+        }
+        {
+          name: RV32E
+          desc: RV32E
+          type: bit
+          default: "0"
+          local: "false"
+          expose: "true"
+          name_top: RvCoreIbexRV32E
+        }
+        {
+          name: RV32M
+          desc: RV32M
+          type: ibex_pkg::rv32m_e
+          default: ibex_pkg::RV32MSingleCycle
+          local: "false"
+          expose: "true"
+          name_top: RvCoreIbexRV32M
+        }
+        {
+          name: RV32B
+          desc: RV32B
+          type: ibex_pkg::rv32b_e
+          default: ibex_pkg::RV32BOTEarlGrey
+          local: "false"
+          expose: "true"
+          name_top: RvCoreIbexRV32B
+        }
+        {
+          name: RegFile
+          desc: Reg file
+          type: ibex_pkg::regfile_e
+          default: ibex_pkg::RegFileFF
+          local: "false"
+          expose: "true"
+          name_top: RvCoreIbexRegFile
+        }
+        {
+          name: BranchTargetALU
+          desc: Branch target ALU
+          type: bit
+          default: "1"
+          local: "false"
+          expose: "true"
+          name_top: RvCoreIbexBranchTargetALU
+        }
+        {
+          name: WritebackStage
+          desc: Write back stage
+          type: bit
+          default: "1"
+          local: "false"
+          expose: "true"
+          name_top: RvCoreIbexWritebackStage
+        }
+        {
+          name: ICache
+          desc: Instruction cache
+          type: bit
+          default: "1"
+          local: "false"
+          expose: "true"
+          name_top: RvCoreIbexICache
+        }
+        {
+          name: ICacheECC
+          desc: Instruction cache ECC
+          type: bit
+          default: "1"
+          local: "false"
+          expose: "true"
+          name_top: RvCoreIbexICacheECC
+        }
+        {
+          name: ICacheScramble
+          desc: Scramble instruction cach
+          type: bit
+          default: "1"
+          local: "false"
+          expose: "true"
+          name_top: RvCoreIbexICacheScramble
+        }
+        {
+          name: ICacheNWays
+          desc: Number of instruction cache ways
+          type: int unsigned
+          default: 2
+          local: "false"
+          expose: "true"
+          name_top: RvCoreIbexICacheNWays
+        }
+        {
+          name: BranchPredictor
+          desc: Branch predictor
+          type: bit
+          default: "0"
+          local: "false"
+          expose: "true"
+          name_top: RvCoreIbexBranchPredictor
+        }
+        {
+          name: DbgTriggerEn
+          desc: Enable degug trigger
+          type: bit
+          default: "1"
+          local: "false"
+          expose: "true"
+          name_top: RvCoreIbexDbgTriggerEn
+        }
+        {
+          name: DbgHwBreakNum
+          desc: Number of debug hardware break
+          type: int
+          default: "4"
+          local: "false"
+          expose: "true"
+          name_top: RvCoreIbexDbgHwBreakNum
+        }
+        {
+          name: SecureIbex
+          desc: "Width of the MHPM Counter "
+          type: bit
+          default: "1"
+          local: "false"
+          expose: "true"
+          name_top: RvCoreIbexSecureIbex
+        }
+        {
+          name: DmBaseAddr
+          desc: Base address of Debug Module
+          type: int unsigned
+          default: tl_main_pkg::ADDR_SPACE_RV_DM__MEM
+          local: "false"
+          expose: "true"
+          name_top: RvCoreIbexDmBaseAddr
+        }
+        {
+          name: DmAddrMask
+          desc: Adress mask of Debug Module
+          type: int unsigned
+          default: tl_main_pkg::ADDR_MASK_RV_DM__MEM
+          local: "false"
+          expose: "true"
+          name_top: RvCoreIbexDmAddrMask
+        }
+        {
+          name: DmHaltAddr
+          desc: Halt address
+          type: int unsigned
+          default: tl_main_pkg::ADDR_SPACE_RV_DM__MEM + dm::HaltAddress[31:0]
+          local: "false"
+          expose: "true"
+          name_top: RvCoreIbexDmHaltAddr
+        }
+        {
+          name: DmExceptionAddr
+          desc: Exception address
+          type: int unsigned
+          default: tl_main_pkg::ADDR_SPACE_RV_DM__MEM + dm::ExceptionAddress[31:0]
+          local: "false"
+          expose: "true"
+          name_top: RvCoreIbexDmExceptionAddr
+        }
+        {
+          name: PipeLine
+          desc: Pipe line
+          type: bit
+          default: "1"
+          local: "false"
+          expose: "true"
+          name_top: RvCoreIbexPipeLine
+        }
+        {
+          name: TlulHostUserRsvdBits
+          desc: TLUL user bits sent on outgoing transfers.
+          type: logic [tlul_pkg::RsvdWidth-1:0]
+          default: "'0"
+          local: "false"
+          expose: "true"
+          name_top: RvCoreIbexTlulHostUserRsvdBits
+        }
+        {
+          name: CsrMvendorId
+          desc:
+            '''
+            mvendorid: encoding of manufacturer/provider
+            0 indicates this field is not implemented.
+            Ibex implementors may wish to set their own JEDEC ID here.
+            '''
+          type: logic [31:0]
+          default: "'0"
+          local: "false"
+          expose: "true"
+          name_top: RvCoreIbexCsrMvendorId
+        }
+        {
+          name: CsrMimpId
+          desc:
+            '''
+            mimpid: encoding of processor implementation version
+            0 indicates this field is not implemented.
+            Ibex implementors may wish to indicate an RTL/netlist version here using their own unique encoding (e.g. 32 bits of the git hash of the implemented commit).
+            '''
+          type: logic [31:0]
+          default: "'0"
+          local: "false"
+          expose: "true"
+          name_top: RvCoreIbexCsrMimpId
+        }
+      ]
+      inter_signal_list:
+      [
+        {
+          name: rst_cpu_n
+          struct: logic
+          type: uni
+          act: req
+          width: 1
+          inst_name: rv_core_ibex
+          index: -1
+        }
+        {
+          name: ram_cfg_icache_tag
+          struct: ram_1p_cfg
+          package: prim_ram_1p_pkg
+          type: uni
+          act: rcv
+          width: 1
+          inst_name: rv_core_ibex
+          default: ""
+          external: true
+          top_signame: rv_core_ibex_icache_tag_ram_1p_cfg
+          conn_type: false
+          index: -1
+        }
+        {
+          name: ram_cfg_rsp_icache_tag
+          struct: ram_1p_cfg_rsp
+          package: prim_ram_1p_pkg
+          type: uni
+          act: req
+          width:
+          {
+            name: ICacheNWays
+            desc: Number of instruction cache ways
+            param_type: int unsigned
+            unpacked_dimensions: null
+            default: 2
+            local: false
+            expose: true
+            name_top: RvCoreIbexICacheNWays
+          }
+          inst_name: rv_core_ibex
+          default: ""
+          external: true
+          top_signame: rv_core_ibex_icache_tag_ram_1p_cfg_rsp
+          conn_type: false
+          index: -1
+        }
+        {
+          name: ram_cfg_icache_data
+          struct: ram_1p_cfg
+          package: prim_ram_1p_pkg
+          type: uni
+          act: rcv
+          width: 1
+          inst_name: rv_core_ibex
+          default: ""
+          external: true
+          top_signame: rv_core_ibex_icache_data_ram_1p_cfg
+          conn_type: false
+          index: -1
+        }
+        {
+          name: ram_cfg_rsp_icache_data
+          struct: ram_1p_cfg_rsp
+          package: prim_ram_1p_pkg
+          type: uni
+          act: req
+          width:
+          {
+            name: ICacheNWays
+            desc: Number of instruction cache ways
+            param_type: int unsigned
+            unpacked_dimensions: null
+            default: 2
+            local: false
+            expose: true
+            name_top: RvCoreIbexICacheNWays
+          }
+          inst_name: rv_core_ibex
+          default: ""
+          external: true
+          top_signame: rv_core_ibex_icache_data_ram_1p_cfg_rsp
+          conn_type: false
+          index: -1
+        }
+        {
+          name: hart_id
+          struct: logic
+          type: uni
+          act: rcv
+          width: 32
+          inst_name: rv_core_ibex
+          default: ""
+          package: ""
+          top_signame: rv_core_ibex_hart_id
+          index: -1
+        }
+        {
+          name: boot_addr
+          struct: logic
+          type: uni
+          act: rcv
+          width: 32
+          inst_name: rv_core_ibex
+          default: ""
+          package: ""
+          top_signame: rv_core_ibex_boot_addr
+          index: -1
+        }
+        {
+          name: irq_software
+          struct: logic
+          type: uni
+          act: rcv
+          width: 1
+          inst_name: rv_core_ibex
+          default: ""
+          package: ""
+          top_signame: rv_plic_msip
+          index: -1
+        }
+        {
+          name: irq_timer
+          struct: logic
+          type: uni
+          act: rcv
+          width: 1
+          inst_name: rv_core_ibex
+          default: ""
+          package: ""
+          top_signame: rv_core_ibex_irq_timer
+          index: -1
+        }
+        {
+          name: irq_external
+          struct: logic
+          type: uni
+          act: rcv
+          width: 1
+          inst_name: rv_core_ibex
+          default: ""
+          package: ""
+          top_signame: rv_plic_irq
+          index: -1
+        }
+        {
+          name: esc_tx
+          struct: esc_tx
+          package: prim_esc_pkg
+          type: uni
+          act: rcv
+          width: 1
+          inst_name: rv_core_ibex
+          default: ""
+          top_signame: alert_handler_esc_tx
+          index: 0
+        }
+        {
+          name: esc_rx
+          struct: esc_rx
+          package: prim_esc_pkg
+          type: uni
+          act: req
+          width: 1
+          inst_name: rv_core_ibex
+          default: ""
+          top_signame: alert_handler_esc_rx
+          index: 0
+        }
+        {
+          name: debug_req
+          struct: logic
+          type: uni
+          act: rcv
+          width: 1
+          inst_name: rv_core_ibex
+          default: ""
+          package: ""
+          top_signame: rv_dm_debug_req
+          index: -1
+        }
+        {
+          name: crash_dump
+          struct: cpu_crash_dump
+          package: rv_core_ibex_pkg
+          type: uni
+          act: req
+          width: 1
+          inst_name: rv_core_ibex
+          default: ""
+          end_idx: -1
+          top_type: broadcast
+          top_signame: rv_core_ibex_crash_dump
+          index: -1
+        }
+        {
+          name: lc_cpu_en
+          struct: lc_tx
+          package: lc_ctrl_pkg
+          type: uni
+          act: rcv
+          width: 1
+          default: lc_ctrl_pkg::On
+          inst_name: rv_core_ibex
+          top_signame: lc_ctrl_lc_cpu_en
+          index: -1
+        }
+        {
+          name: pwrmgr_cpu_en
+          struct: lc_tx
+          package: lc_ctrl_pkg
+          type: uni
+          act: rcv
+          width: 1
+          inst_name: rv_core_ibex
+          default: ""
+          top_signame: pwrmgr_aon_fetch_en
+          index: -1
+        }
+        {
+          name: pwrmgr
+          struct: cpu_pwrmgr
+          package: rv_core_ibex_pkg
+          type: uni
+          act: req
+          width: 1
+          inst_name: rv_core_ibex
+          default: ""
+          end_idx: -1
+          top_type: broadcast
+          top_signame: rv_core_ibex_pwrmgr
+          index: -1
+        }
+        {
+          name: nmi_wdog
+          struct: logic
+          type: uni
+          act: rcv
+          width: 1
+          inst_name: rv_core_ibex
+          default: ""
+          package: ""
+          top_signame: aon_timer_aon_nmi_wdog_timer_bark
+          index: -1
+        }
+        {
+          name: edn
+          struct: edn
+          package: edn_pkg
+          type: req_rsp
+          act: req
+          width: 1
+          inst_name: rv_core_ibex
+          default: ""
+          top_signame: edn0_edn
+          index: 6
+        }
+        {
+          name: icache_otp_key
+          struct: sram_otp_key
+          package: otp_ctrl_pkg
+          type: req_rsp
+          act: req
+          width: 1
+          inst_name: rv_core_ibex
+          default: ""
+          top_signame: otp_ctrl_sram_otp_key
+          index: 3
+        }
+        {
+          name: fpga_info
+          struct: logic
+          type: uni
+          act: rcv
+          width: 32
+          inst_name: rv_core_ibex
+          default: ""
+          package: ""
+          external: true
+          top_signame: fpga_info
+          conn_type: false
+          index: -1
+        }
+        {
+          name: corei_tl_h
+          struct: tl
+          package: tlul_pkg
+          type: req_rsp
+          act: req
+          width: 1
+          inst_name: rv_core_ibex
+          index: -1
+        }
+        {
+          name: cored_tl_h
+          struct: tl
+          package: tlul_pkg
+          type: req_rsp
+          act: req
+          width: 1
+          inst_name: rv_core_ibex
+          index: -1
+        }
+        {
+          name: cfg_tl_d
+          struct: tl
+          package: tlul_pkg
+          type: req_rsp
+          act: rsp
+          width: 1
+          inst_name: rv_core_ibex
+          index: -1
+        }
+      ]
+      base_addrs:
+      {
+        cfg:
+        {
+          hart: 0x211f0000
+        }
+      }
+      generate_dif: true
+      domain:
+      [
+        "0"
+      ]
+    }
   ]
   memory: []
   port:
@@ -10915,15 +11663,21 @@
       ]
       alert_handler.esc_rx:
       [
+        rv_core_ibex.esc_rx
         lc_ctrl.esc_scrap_state0_rx
         lc_ctrl.esc_scrap_state1_rx
         pwrmgr_aon.esc_rst_rx
       ]
       alert_handler.esc_tx:
       [
+        rv_core_ibex.esc_tx
         lc_ctrl.esc_scrap_state0_tx
         lc_ctrl.esc_scrap_state1_tx
         pwrmgr_aon.esc_rst_tx
+      ]
+      aon_timer_aon.nmi_wdog_timer_bark:
+      [
+        rv_core_ibex.nmi_wdog
       ]
       csrng.csrng_cmd:
       [
@@ -10943,6 +11697,7 @@
         sram_ctrl_main.sram_otp_key
         sram_ctrl_ret_aon.sram_otp_key
         sram_ctrl_mbox.sram_otp_key
+        rv_core_ibex.icache_otp_key
       ]
       pwrmgr_aon.pwr_rst:
       [
@@ -10969,6 +11724,10 @@
       [
         pinmux_aon.sleep_en
         aon_timer_aon.sleep_mode
+      ]
+      pwrmgr_aon.fetch_en:
+      [
+        rv_core_ibex.pwrmgr_cpu_en
       ]
       pwrmgr_aon.rom_ctrl:
       [
@@ -11017,6 +11776,7 @@
         alert_handler.edn
         aes.edn
         otbn.edn_urnd
+        rv_core_ibex.edn
       ]
       edn1.edn:
       [
@@ -11105,6 +11865,10 @@
         pwrmgr_aon.lc_hw_debug_en
         soc_dbg_ctrl.lc_hw_debug_en
       ]
+      lc_ctrl.lc_cpu_en:
+      [
+        rv_core_ibex.lc_cpu_en
+      ]
       lc_ctrl.lc_keymgr_en:
       [
         keymgr_dpe.lc_keymgr_en
@@ -11149,6 +11913,26 @@
       otp_ctrl.otp_macro:
       [
         otp_macro.otp
+      ]
+      rv_plic.msip:
+      [
+        rv_core_ibex.irq_software
+      ]
+      rv_plic.irq:
+      [
+        rv_core_ibex.irq_external
+      ]
+      rv_dm.debug_req:
+      [
+        rv_core_ibex.debug_req
+      ]
+      rv_core_ibex.crash_dump:
+      [
+        rstmgr_aon.cpu_dump
+      ]
+      rv_core_ibex.pwrmgr:
+      [
+        pwrmgr_aon.pwr_cpu
       ]
       spi_device.passthrough:
       [
@@ -11541,6 +12325,9 @@
       clkmgr_aon.cg_en
       rstmgr_aon.resets
       rstmgr_aon.rst_en
+      rv_core_ibex.irq_timer
+      rv_core_ibex.hart_id
+      rv_core_ibex.boot_addr
       otp_ctrl.otp_broadcast
       csrng.otp_en_csrng_sw_app_read
       soc_dbg_ctrl.soc_dbg_state
@@ -11569,18 +12356,10 @@
       otbn.ram_cfg_rsp_imem: otbn_imem_ram_1p_cfg_rsp
       otbn.ram_cfg_dmem: otbn_dmem_ram_1p_cfg
       otbn.ram_cfg_rsp_dmem: otbn_dmem_ram_1p_cfg_rsp
-      alert_handler.esc_rx: rv_core_ibex.esc_rx
-      alert_handler.esc_tx: rv_core_ibex.esc_tx
-      aon_timer_aon.nmi_wdog_timer_bark: rv_core_ibex_nmi_wdog
-      otp_ctrl.sram_otp_key: rv_core_ibex.icache_otp_key
-      pwrmgr_aon.fetch_en: rv_core_ibex.pwrmgr_cpu_en
-      edn0.edn: rv_core_ibex.edn
-      lc_ctrl.lc_cpu_en: rv_core_ibex.lc_cpu_en
-      rv_plic.msip: rv_core_ibex.irq_software
-      rv_plic.irq: rv_core_ibex.irq_external
-      rv_dm.debug_req: rv_core_ibex.debug_req
-      rstmgr_aon.cpu_dump: rv_core_ibex.crash_dump
-      pwrmgr_aon.pwr_cpu: rv_core_ibex.pwrmgr
+      rv_core_ibex.ram_cfg_icache_tag: rv_core_ibex_icache_tag_ram_1p_cfg
+      rv_core_ibex.ram_cfg_rsp_icache_tag: rv_core_ibex_icache_tag_ram_1p_cfg_rsp
+      rv_core_ibex.ram_cfg_icache_data: rv_core_ibex_icache_data_ram_1p_cfg
+      rv_core_ibex.ram_cfg_rsp_icache_data: rv_core_ibex_icache_data_ram_1p_cfg_rsp
       spi_device.ram_cfg_sys2spi: spi_device_ram_2p_cfg_sys2spi
       spi_device.ram_cfg_rsp_sys2spi: spi_device_ram_2p_cfg_rsp_sys2spi
       spi_device.ram_cfg_rsp_spi2sys: spi_device_ram_2p_cfg_rsp_spi2sys
@@ -11651,6 +12430,7 @@
       otp_macro.cfg: otp_cfg
       otp_macro.cfg_rsp: otp_cfg_rsp
       rstmgr_aon.por_n: por_n
+      rv_core_ibex.fpga_info: fpga_info
       soc_proxy.misc_tl_h2d: ctn_misc_tl_h2d
       soc_proxy.misc_tl_d2h: ctn_misc_tl_d2h
       soc_proxy.soc_fatal_alert: soc_fatal_alert
@@ -18387,6 +19167,46 @@
       lpg_name: secure_lc_0
       lpg_idx: 13
     }
+    {
+      name: rv_core_ibex_fatal_sw_err
+      width: 1
+      type: alert
+      async: "1"
+      module_name: rv_core_ibex
+      desc: rv_core_ibex fatal_sw_err alert
+      lpg_name: infra_lc_0
+      lpg_idx: 10
+    }
+    {
+      name: rv_core_ibex_recov_sw_err
+      width: 1
+      type: alert
+      async: "1"
+      module_name: rv_core_ibex
+      desc: rv_core_ibex recov_sw_err alert
+      lpg_name: infra_lc_0
+      lpg_idx: 10
+    }
+    {
+      name: rv_core_ibex_fatal_hw_err
+      width: 1
+      type: alert
+      async: "1"
+      module_name: rv_core_ibex
+      desc: rv_core_ibex fatal_hw_err alert
+      lpg_name: infra_lc_0
+      lpg_idx: 10
+    }
+    {
+      name: rv_core_ibex_recov_hw_err
+      width: 1
+      type: alert
+      async: "1"
+      module_name: rv_core_ibex
+      desc: rv_core_ibex recov_hw_err alert
+      lpg_name: infra_lc_0
+      lpg_idx: 10
+    }
   ]
   outgoing_alert: {}
   interrupt:
@@ -19651,6 +20471,7 @@
     soc_dbg_ctrl
     racl_ctrl
     ac_range_check
+    rv_core_ibex
   ]
   interrupt_module:
   [
@@ -20683,12 +21504,10 @@
         width: 4
         default: "'0"
         inst_name: otp_ctrl
-        end_idx: 3
-        top_type: partial-one-to-N
+        end_idx: -1
+        top_type: one-to-N
         top_signame: otp_ctrl_sram_otp_key
         index: -1
-        external: true
-        conn_type: true
       }
       {
         name: otbn_otp_key
@@ -20946,7 +21765,7 @@
         inst_name: lc_ctrl
         default: ""
         top_signame: alert_handler_esc_tx
-        index: 0
+        index: 1
       }
       {
         name: esc_scrap_state0_rx
@@ -20958,7 +21777,7 @@
         inst_name: lc_ctrl
         default: ""
         top_signame: alert_handler_esc_rx
-        index: 0
+        index: 1
       }
       {
         name: esc_scrap_state1_tx
@@ -20970,7 +21789,7 @@
         inst_name: lc_ctrl
         default: ""
         top_signame: alert_handler_esc_tx
-        index: 1
+        index: 2
       }
       {
         name: esc_scrap_state1_rx
@@ -20982,7 +21801,7 @@
         inst_name: lc_ctrl
         default: ""
         top_signame: alert_handler_esc_rx
-        index: 1
+        index: 2
       }
       {
         name: pwr_lc
@@ -21136,9 +21955,9 @@
         width: 1
         default: lc_ctrl_pkg::Off
         inst_name: lc_ctrl
-        external: true
-        top_signame: rv_core_ibex.lc_cpu_en
-        conn_type: false
+        end_idx: -1
+        top_type: broadcast
+        top_signame: lc_ctrl_lc_cpu_en
         index: -1
       }
       {
@@ -21443,12 +22262,10 @@
         width: 4
         inst_name: alert_handler
         default: ""
-        end_idx: 3
-        top_type: partial-one-to-N
+        end_idx: -1
+        top_type: one-to-N
         top_signame: alert_handler_esc_rx
         index: -1
-        external: true
-        conn_type: true
       }
       {
         name: esc_tx
@@ -21459,12 +22276,10 @@
         width: 4
         inst_name: alert_handler
         default: ""
-        end_idx: 3
-        top_type: partial-one-to-N
+        end_idx: -1
+        top_type: one-to-N
         top_signame: alert_handler_esc_tx
         index: -1
-        external: true
-        conn_type: true
       }
       {
         name: tl
@@ -21651,7 +22466,7 @@
         inst_name: pwrmgr_aon
         default: ""
         top_signame: alert_handler_esc_tx
-        index: 2
+        index: 3
       }
       {
         name: esc_rst_rx
@@ -21663,7 +22478,7 @@
         inst_name: pwrmgr_aon
         default: ""
         top_signame: alert_handler_esc_rx
-        index: 2
+        index: 3
       }
       {
         name: pwr_cpu
@@ -21674,9 +22489,7 @@
         width: 1
         inst_name: pwrmgr_aon
         default: ""
-        external: true
-        top_signame: rv_core_ibex.pwrmgr
-        conn_type: false
+        top_signame: rv_core_ibex_pwrmgr
         index: -1
       }
       {
@@ -21770,9 +22583,9 @@
         width: 1
         inst_name: pwrmgr_aon
         default: ""
-        external: true
-        top_signame: rv_core_ibex.pwrmgr_cpu_en
-        conn_type: false
+        end_idx: -1
+        top_type: broadcast
+        top_signame: pwrmgr_aon_fetch_en
         index: -1
       }
       {
@@ -21909,9 +22722,7 @@
         width: 1
         inst_name: rstmgr_aon
         default: ""
-        external: true
-        top_signame: rv_core_ibex.crash_dump
-        conn_type: false
+        top_signame: rv_core_ibex_crash_dump
         index: -1
       }
       {
@@ -22202,9 +23013,9 @@
         default: 1'b0
         inst_name: aon_timer_aon
         package: ""
-        external: true
-        top_signame: rv_core_ibex_nmi_wdog
-        conn_type: false
+        end_idx: -1
+        top_type: broadcast
+        top_signame: aon_timer_aon_nmi_wdog_timer_bark
         index: -1
       }
       {
@@ -22964,9 +23775,9 @@
         inst_name: rv_dm
         default: ""
         package: ""
-        external: true
-        top_signame: rv_core_ibex.debug_req
-        conn_type: false
+        end_idx: -1
+        top_type: broadcast
+        top_signame: rv_dm_debug_req
         index: -1
       }
       {
@@ -23124,9 +23935,9 @@
         inst_name: rv_plic
         default: ""
         package: ""
-        external: true
-        top_signame: rv_core_ibex.irq_external
-        conn_type: false
+        end_idx: -1
+        top_type: broadcast
+        top_signame: rv_plic_irq
         index: -1
       }
       {
@@ -23147,9 +23958,9 @@
         inst_name: rv_plic
         default: ""
         package: ""
-        external: true
-        top_signame: rv_core_ibex.irq_software
-        conn_type: false
+        end_idx: -1
+        top_type: broadcast
+        top_signame: rv_plic_msip
         index: -1
       }
       {
@@ -24035,12 +24846,10 @@
         width: 8
         default: "'0"
         inst_name: edn0
-        end_idx: 6
+        end_idx: 7
         top_type: partial-one-to-N
         top_signame: edn0_edn
         index: -1
-        external: true
-        conn_type: true
       }
       {
         name: tl
@@ -26258,6 +27067,319 @@
         index: -1
       }
       {
+        name: rst_cpu_n
+        struct: logic
+        type: uni
+        act: req
+        width: 1
+        inst_name: rv_core_ibex
+        index: -1
+      }
+      {
+        name: ram_cfg_icache_tag
+        struct: ram_1p_cfg
+        package: prim_ram_1p_pkg
+        type: uni
+        act: rcv
+        width: 1
+        inst_name: rv_core_ibex
+        default: ""
+        external: true
+        top_signame: rv_core_ibex_icache_tag_ram_1p_cfg
+        conn_type: false
+        index: -1
+      }
+      {
+        name: ram_cfg_rsp_icache_tag
+        struct: ram_1p_cfg_rsp
+        package: prim_ram_1p_pkg
+        type: uni
+        act: req
+        width:
+        {
+          name: ICacheNWays
+          desc: Number of instruction cache ways
+          param_type: int unsigned
+          unpacked_dimensions: null
+          default: 2
+          local: false
+          expose: true
+          name_top: RvCoreIbexICacheNWays
+        }
+        inst_name: rv_core_ibex
+        default: ""
+        external: true
+        top_signame: rv_core_ibex_icache_tag_ram_1p_cfg_rsp
+        conn_type: false
+        index: -1
+      }
+      {
+        name: ram_cfg_icache_data
+        struct: ram_1p_cfg
+        package: prim_ram_1p_pkg
+        type: uni
+        act: rcv
+        width: 1
+        inst_name: rv_core_ibex
+        default: ""
+        external: true
+        top_signame: rv_core_ibex_icache_data_ram_1p_cfg
+        conn_type: false
+        index: -1
+      }
+      {
+        name: ram_cfg_rsp_icache_data
+        struct: ram_1p_cfg_rsp
+        package: prim_ram_1p_pkg
+        type: uni
+        act: req
+        width:
+        {
+          name: ICacheNWays
+          desc: Number of instruction cache ways
+          param_type: int unsigned
+          unpacked_dimensions: null
+          default: 2
+          local: false
+          expose: true
+          name_top: RvCoreIbexICacheNWays
+        }
+        inst_name: rv_core_ibex
+        default: ""
+        external: true
+        top_signame: rv_core_ibex_icache_data_ram_1p_cfg_rsp
+        conn_type: false
+        index: -1
+      }
+      {
+        name: hart_id
+        struct: logic
+        type: uni
+        act: rcv
+        width: 32
+        inst_name: rv_core_ibex
+        default: ""
+        package: ""
+        top_signame: rv_core_ibex_hart_id
+        index: -1
+      }
+      {
+        name: boot_addr
+        struct: logic
+        type: uni
+        act: rcv
+        width: 32
+        inst_name: rv_core_ibex
+        default: ""
+        package: ""
+        top_signame: rv_core_ibex_boot_addr
+        index: -1
+      }
+      {
+        name: irq_software
+        struct: logic
+        type: uni
+        act: rcv
+        width: 1
+        inst_name: rv_core_ibex
+        default: ""
+        package: ""
+        top_signame: rv_plic_msip
+        index: -1
+      }
+      {
+        name: irq_timer
+        struct: logic
+        type: uni
+        act: rcv
+        width: 1
+        inst_name: rv_core_ibex
+        default: ""
+        package: ""
+        top_signame: rv_core_ibex_irq_timer
+        index: -1
+      }
+      {
+        name: irq_external
+        struct: logic
+        type: uni
+        act: rcv
+        width: 1
+        inst_name: rv_core_ibex
+        default: ""
+        package: ""
+        top_signame: rv_plic_irq
+        index: -1
+      }
+      {
+        name: esc_tx
+        struct: esc_tx
+        package: prim_esc_pkg
+        type: uni
+        act: rcv
+        width: 1
+        inst_name: rv_core_ibex
+        default: ""
+        top_signame: alert_handler_esc_tx
+        index: 0
+      }
+      {
+        name: esc_rx
+        struct: esc_rx
+        package: prim_esc_pkg
+        type: uni
+        act: req
+        width: 1
+        inst_name: rv_core_ibex
+        default: ""
+        top_signame: alert_handler_esc_rx
+        index: 0
+      }
+      {
+        name: debug_req
+        struct: logic
+        type: uni
+        act: rcv
+        width: 1
+        inst_name: rv_core_ibex
+        default: ""
+        package: ""
+        top_signame: rv_dm_debug_req
+        index: -1
+      }
+      {
+        name: crash_dump
+        struct: cpu_crash_dump
+        package: rv_core_ibex_pkg
+        type: uni
+        act: req
+        width: 1
+        inst_name: rv_core_ibex
+        default: ""
+        end_idx: -1
+        top_type: broadcast
+        top_signame: rv_core_ibex_crash_dump
+        index: -1
+      }
+      {
+        name: lc_cpu_en
+        struct: lc_tx
+        package: lc_ctrl_pkg
+        type: uni
+        act: rcv
+        width: 1
+        default: lc_ctrl_pkg::On
+        inst_name: rv_core_ibex
+        top_signame: lc_ctrl_lc_cpu_en
+        index: -1
+      }
+      {
+        name: pwrmgr_cpu_en
+        struct: lc_tx
+        package: lc_ctrl_pkg
+        type: uni
+        act: rcv
+        width: 1
+        inst_name: rv_core_ibex
+        default: ""
+        top_signame: pwrmgr_aon_fetch_en
+        index: -1
+      }
+      {
+        name: pwrmgr
+        struct: cpu_pwrmgr
+        package: rv_core_ibex_pkg
+        type: uni
+        act: req
+        width: 1
+        inst_name: rv_core_ibex
+        default: ""
+        end_idx: -1
+        top_type: broadcast
+        top_signame: rv_core_ibex_pwrmgr
+        index: -1
+      }
+      {
+        name: nmi_wdog
+        struct: logic
+        type: uni
+        act: rcv
+        width: 1
+        inst_name: rv_core_ibex
+        default: ""
+        package: ""
+        top_signame: aon_timer_aon_nmi_wdog_timer_bark
+        index: -1
+      }
+      {
+        name: edn
+        struct: edn
+        package: edn_pkg
+        type: req_rsp
+        act: req
+        width: 1
+        inst_name: rv_core_ibex
+        default: ""
+        top_signame: edn0_edn
+        index: 6
+      }
+      {
+        name: icache_otp_key
+        struct: sram_otp_key
+        package: otp_ctrl_pkg
+        type: req_rsp
+        act: req
+        width: 1
+        inst_name: rv_core_ibex
+        default: ""
+        top_signame: otp_ctrl_sram_otp_key
+        index: 3
+      }
+      {
+        name: fpga_info
+        struct: logic
+        type: uni
+        act: rcv
+        width: 32
+        inst_name: rv_core_ibex
+        default: ""
+        package: ""
+        external: true
+        top_signame: fpga_info
+        conn_type: false
+        index: -1
+      }
+      {
+        name: corei_tl_h
+        struct: tl
+        package: tlul_pkg
+        type: req_rsp
+        act: req
+        width: 1
+        inst_name: rv_core_ibex
+        index: -1
+      }
+      {
+        name: cored_tl_h
+        struct: tl
+        package: tlul_pkg
+        type: req_rsp
+        act: req
+        width: 1
+        inst_name: rv_core_ibex
+        index: -1
+      }
+      {
+        name: cfg_tl_d
+        struct: tl
+        package: tlul_pkg
+        type: req_rsp
+        act: rsp
+        width: 1
+        inst_name: rv_core_ibex
+        index: -1
+      }
+      {
         name: tl_rv_dm__sba
         struct: tl
         package: tlul_pkg
@@ -27584,172 +28706,72 @@
         netname: otbn_dmem_ram_1p_cfg_rsp
       }
       {
-        package: prim_esc_pkg
-        struct: esc_rx
-        signame: rv_core_ibex.esc_rx_i
-        width: 4
-        type: uni
-        default: ""
-        direction: in
-        conn_type: true
-        index: -1
-        netname: alert_handler_esc_rx
-      }
-      {
-        package: prim_esc_pkg
-        struct: esc_tx
-        signame: rv_core_ibex.esc_tx_o
-        width: 4
-        type: uni
-        default: ""
-        direction: out
-        conn_type: true
-        index: -1
-        netname: alert_handler_esc_tx
-      }
-      {
-        package: ""
-        struct: logic
-        signame: rv_core_ibex_nmi_wdog_o
-        width: 1
-        type: uni
-        default: 1'b0
-        direction: out
-        conn_type: false
-        index: -1
-        netname: rv_core_ibex_nmi_wdog
-      }
-      {
-        package: otp_ctrl_pkg
-        struct: sram_otp_key_req
-        signame: rv_core_ibex.icache_otp_key_req_i
-        width: 4
-        type: req_rsp
-        default: "'0"
-        direction: in
-        conn_type: true
-        index: -1
-        netname: otp_ctrl_sram_otp_key_req
-      }
-      {
-        package: otp_ctrl_pkg
-        struct: sram_otp_key_rsp
-        signame: rv_core_ibex.icache_otp_key_rsp_o
-        width: 4
-        type: req_rsp
-        default: "'0"
-        direction: out
-        conn_type: true
-        index: -1
-        netname: otp_ctrl_sram_otp_key_rsp
-      }
-      {
-        package: lc_ctrl_pkg
-        struct: lc_tx
-        signame: rv_core_ibex.pwrmgr_cpu_en_o
-        width: 1
-        type: uni
-        default: ""
-        direction: out
-        conn_type: false
-        index: -1
-        netname: rv_core_ibex.pwrmgr_cpu_en
-      }
-      {
-        package: edn_pkg
-        struct: edn_req
-        signame: rv_core_ibex.edn_req_i
-        width: 8
-        type: req_rsp
-        default: "'0"
-        direction: in
-        conn_type: true
-        index: -1
-        netname: edn0_edn_req
-      }
-      {
-        package: edn_pkg
-        struct: edn_rsp
-        signame: rv_core_ibex.edn_rsp_o
-        width: 8
-        type: req_rsp
-        default: "'0"
-        direction: out
-        conn_type: true
-        index: -1
-        netname: edn0_edn_rsp
-      }
-      {
-        package: lc_ctrl_pkg
-        struct: lc_tx
-        signame: rv_core_ibex.lc_cpu_en_o
-        width: 1
-        type: uni
-        default: lc_ctrl_pkg::Off
-        direction: out
-        conn_type: false
-        index: -1
-        netname: rv_core_ibex.lc_cpu_en
-      }
-      {
-        package: ""
-        struct: logic
-        signame: rv_core_ibex.irq_software_o
-        width: 1
-        type: uni
-        default: ""
-        direction: out
-        conn_type: false
-        index: -1
-        netname: rv_core_ibex.irq_software
-      }
-      {
-        package: ""
-        struct: logic
-        signame: rv_core_ibex.irq_external_o
-        width: 1
-        type: uni
-        default: ""
-        direction: out
-        conn_type: false
-        index: -1
-        netname: rv_core_ibex.irq_external
-      }
-      {
-        package: ""
-        struct: logic [rv_dm_reg_pkg::NrHarts-1:0]
-        signame: rv_core_ibex.debug_req_o
-        width: 1
-        type: uni
-        default: ""
-        direction: out
-        conn_type: false
-        index: -1
-        netname: rv_core_ibex.debug_req
-      }
-      {
-        package: rv_core_ibex_pkg
-        struct: cpu_crash_dump
-        signame: rv_core_ibex.crash_dump_i
+        package: prim_ram_1p_pkg
+        struct: ram_1p_cfg
+        signame: rv_core_ibex_icache_tag_ram_1p_cfg_i
         width: 1
         type: uni
         default: ""
         direction: in
         conn_type: false
         index: -1
-        netname: rv_core_ibex.crash_dump
+        netname: rv_core_ibex_icache_tag_ram_1p_cfg
       }
       {
-        package: rv_core_ibex_pkg
-        struct: cpu_pwrmgr
-        signame: rv_core_ibex.pwrmgr_i
+        package: prim_ram_1p_pkg
+        struct: ram_1p_cfg_rsp
+        signame: rv_core_ibex_icache_tag_ram_1p_cfg_rsp_o
+        width:
+        {
+          name: ICacheNWays
+          desc: Number of instruction cache ways
+          param_type: int unsigned
+          unpacked_dimensions: null
+          default: 2
+          local: false
+          expose: true
+          name_top: RvCoreIbexICacheNWays
+        }
+        type: uni
+        default: ""
+        direction: out
+        conn_type: false
+        index: -1
+        netname: rv_core_ibex_icache_tag_ram_1p_cfg_rsp
+      }
+      {
+        package: prim_ram_1p_pkg
+        struct: ram_1p_cfg
+        signame: rv_core_ibex_icache_data_ram_1p_cfg_i
         width: 1
         type: uni
         default: ""
         direction: in
         conn_type: false
         index: -1
-        netname: rv_core_ibex.pwrmgr
+        netname: rv_core_ibex_icache_data_ram_1p_cfg
+      }
+      {
+        package: prim_ram_1p_pkg
+        struct: ram_1p_cfg_rsp
+        signame: rv_core_ibex_icache_data_ram_1p_cfg_rsp_o
+        width:
+        {
+          name: ICacheNWays
+          desc: Number of instruction cache ways
+          param_type: int unsigned
+          unpacked_dimensions: null
+          default: 2
+          local: false
+          expose: true
+          name_top: RvCoreIbexICacheNWays
+        }
+        type: uni
+        default: ""
+        direction: out
+        conn_type: false
+        index: -1
+        netname: rv_core_ibex_icache_data_ram_1p_cfg_rsp
       }
       {
         package: prim_ram_2p_pkg
@@ -28667,6 +29689,18 @@
         netname: por_n
       }
       {
+        package: ""
+        struct: logic
+        signame: fpga_info_i
+        width: 32
+        type: uni
+        default: ""
+        direction: in
+        conn_type: false
+        index: -1
+        netname: fpga_info
+      }
+      {
         package: tlul_pkg
         struct: tl_h2d
         signame: ctn_misc_tl_h2d_i
@@ -28959,7 +29993,7 @@
         signame: alert_handler_esc_rx
         width: 4
         type: uni
-        end_idx: 3
+        end_idx: -1
         act: rcv
         suffix: ""
         default: prim_esc_pkg::ESC_RX_DEFAULT
@@ -28970,10 +30004,21 @@
         signame: alert_handler_esc_tx
         width: 4
         type: uni
-        end_idx: 3
+        end_idx: -1
         act: req
         suffix: ""
         default: prim_esc_pkg::ESC_TX_DEFAULT
+      }
+      {
+        package: ""
+        struct: logic
+        signame: aon_timer_aon_nmi_wdog_timer_bark
+        width: 1
+        type: uni
+        end_idx: -1
+        act: req
+        suffix: ""
+        default: 1'b0
       }
       {
         package: csrng_pkg
@@ -29047,7 +30092,7 @@
         signame: otp_ctrl_sram_otp_key_req
         width: 4
         type: req_rsp
-        end_idx: 3
+        end_idx: -1
         act: rsp
         suffix: req
         default: "'0"
@@ -29058,7 +30103,7 @@
         signame: otp_ctrl_sram_otp_key_rsp
         width: 4
         type: req_rsp
-        end_idx: 3
+        end_idx: -1
         act: rsp
         suffix: rsp
         default: ""
@@ -29174,6 +30219,17 @@
         default: "'0"
       }
       {
+        package: lc_ctrl_pkg
+        struct: lc_tx
+        signame: pwrmgr_aon_fetch_en
+        width: 1
+        type: uni
+        end_idx: -1
+        act: req
+        suffix: ""
+        default: lc_ctrl_pkg::LC_TX_DEFAULT
+      }
+      {
         package: rom_ctrl_pkg
         struct: pwrmgr_data
         signame: pwrmgr_aon_rom_ctrl
@@ -29278,7 +30334,7 @@
         signame: edn0_edn_req
         width: 8
         type: req_rsp
-        end_idx: 6
+        end_idx: 7
         act: rsp
         suffix: req
         default: "'0"
@@ -29289,7 +30345,7 @@
         signame: edn0_edn_rsp
         width: 8
         type: req_rsp
-        end_idx: 6
+        end_idx: 7
         act: rsp
         suffix: rsp
         default: ""
@@ -29570,6 +30626,17 @@
       {
         package: lc_ctrl_pkg
         struct: lc_tx
+        signame: lc_ctrl_lc_cpu_en
+        width: 1
+        type: uni
+        end_idx: -1
+        act: req
+        suffix: ""
+        default: lc_ctrl_pkg::Off
+      }
+      {
+        package: lc_ctrl_pkg
+        struct: lc_tx
         signame: lc_ctrl_lc_keymgr_en
         width: 1
         type: uni
@@ -29676,6 +30743,61 @@
         act: req
         suffix: rsp
         default: "'0"
+      }
+      {
+        package: ""
+        struct: logic
+        signame: rv_plic_msip
+        width: 1
+        type: uni
+        end_idx: -1
+        act: req
+        suffix: ""
+        default: "'0"
+      }
+      {
+        package: ""
+        struct: logic
+        signame: rv_plic_irq
+        width: 1
+        type: uni
+        end_idx: -1
+        act: req
+        suffix: ""
+        default: "'0"
+      }
+      {
+        package: ""
+        struct: logic [rv_dm_reg_pkg::NrHarts-1:0]
+        signame: rv_dm_debug_req
+        width: 1
+        type: uni
+        end_idx: -1
+        act: req
+        suffix: ""
+        default: "'0"
+      }
+      {
+        package: rv_core_ibex_pkg
+        struct: cpu_crash_dump
+        signame: rv_core_ibex_crash_dump
+        width: 1
+        type: uni
+        end_idx: -1
+        act: req
+        suffix: ""
+        default: rv_core_ibex_pkg::CPU_CRASH_DUMP_DEFAULT
+      }
+      {
+        package: rv_core_ibex_pkg
+        struct: cpu_pwrmgr
+        signame: rv_core_ibex_pwrmgr
+        width: 1
+        type: uni
+        end_idx: -1
+        act: req
+        suffix: ""
+        default: rv_core_ibex_pkg::CPU_PWRMGR_DEFAULT
       }
       {
         package: spi_device_pkg
@@ -31589,6 +32711,33 @@
         struct: rstmgr_rst_en
         signame: rstmgr_aon_rst_en
         width: 1
+        type: uni
+        end_idx: -1
+        default: ""
+      }
+      {
+        package: ""
+        struct: logic
+        signame: rv_core_ibex_irq_timer
+        width: 1
+        type: uni
+        end_idx: -1
+        default: ""
+      }
+      {
+        package: ""
+        struct: logic
+        signame: rv_core_ibex_hart_id
+        width: 32
+        type: uni
+        end_idx: -1
+        default: ""
+      }
+      {
+        package: ""
+        struct: logic
+        signame: rv_core_ibex_boot_addr
+        width: 32
         type: uni
         end_idx: -1
         default: ""

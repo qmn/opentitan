@@ -966,6 +966,24 @@ extern "C" {
  */
 #define TOP_DARJEELING_SOC_DBG_CTRL_CORE_SIZE_BYTES 0x20u
 
+/**
+ * Peripheral base address for cfg device on rv_core_ibex in top darjeeling.
+ *
+ * This should be used with #mmio_region_from_addr to access the memory-mapped
+ * registers associated with the peripheral (usually via a DIF).
+ */
+#define TOP_DARJEELING_RV_CORE_IBEX_CFG_BASE_ADDR 0x211F0000u
+
+/**
+ * Peripheral size for cfg device on rv_core_ibex in top darjeeling.
+ *
+ * This is the size (in bytes) of the peripheral's reserved memory area. All
+ * memory-mapped registers associated with this peripheral should have an
+ * address between #TOP_DARJEELING_RV_CORE_IBEX_CFG_BASE_ADDR and
+ * `TOP_DARJEELING_RV_CORE_IBEX_CFG_BASE_ADDR + TOP_DARJEELING_RV_CORE_IBEX_CFG_SIZE_BYTES`.
+ */
+#define TOP_DARJEELING_RV_CORE_IBEX_CFG_SIZE_BYTES 0x800u
+
 
 /**
  * Memory base address for ctn in top darjeeling.
@@ -1318,7 +1336,8 @@ typedef enum top_darjeeling_alert_peripheral {
   kTopDarjeelingAlertPeripheralSocDbgCtrl = 42, /**< soc_dbg_ctrl */
   kTopDarjeelingAlertPeripheralRaclCtrl = 43, /**< racl_ctrl */
   kTopDarjeelingAlertPeripheralAcRangeCheck = 44, /**< ac_range_check */
-  kTopDarjeelingAlertPeripheralLast = 44, /**< \internal Final Alert peripheral */
+  kTopDarjeelingAlertPeripheralRvCoreIbex = 45, /**< rv_core_ibex */
+  kTopDarjeelingAlertPeripheralLast = 45, /**< \internal Final Alert peripheral */
 } top_darjeeling_alert_peripheral_t;
 
 /**
@@ -1429,7 +1448,11 @@ typedef enum top_darjeeling_alert_id {
   kTopDarjeelingAlertIdRaclCtrlRecovCtrlUpdateErr = 98, /**< racl_ctrl_recov_ctrl_update_err */
   kTopDarjeelingAlertIdAcRangeCheckRecovCtrlUpdateErr = 99, /**< ac_range_check_recov_ctrl_update_err */
   kTopDarjeelingAlertIdAcRangeCheckFatalFault = 100, /**< ac_range_check_fatal_fault */
-  kTopDarjeelingAlertIdLast = 100, /**< \internal The Last Valid Alert ID. */
+  kTopDarjeelingAlertIdRvCoreIbexFatalSwErr = 101, /**< rv_core_ibex_fatal_sw_err */
+  kTopDarjeelingAlertIdRvCoreIbexRecovSwErr = 102, /**< rv_core_ibex_recov_sw_err */
+  kTopDarjeelingAlertIdRvCoreIbexFatalHwErr = 103, /**< rv_core_ibex_fatal_hw_err */
+  kTopDarjeelingAlertIdRvCoreIbexRecovHwErr = 104, /**< rv_core_ibex_recov_hw_err */
+  kTopDarjeelingAlertIdLast = 104, /**< \internal The Last Valid Alert ID. */
 } top_darjeeling_alert_id_t;
 
 /**
@@ -1439,7 +1462,7 @@ typedef enum top_darjeeling_alert_id {
  * `top_darjeeling_alert_peripheral_t`.
  */
 extern const top_darjeeling_alert_peripheral_t
-    top_darjeeling_alert_for_peripheral[101];
+    top_darjeeling_alert_for_peripheral[105];
 
 #define PINMUX_MIO_PERIPH_INSEL_IDX_OFFSET 2
 

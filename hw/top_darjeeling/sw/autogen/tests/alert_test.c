@@ -31,6 +31,7 @@
 #include "sw/device/lib/dif/autogen/dif_pwrmgr_autogen.h"
 #include "sw/device/lib/dif/autogen/dif_rom_ctrl_autogen.h"
 #include "sw/device/lib/dif/autogen/dif_rstmgr_autogen.h"
+#include "sw/device/lib/dif/autogen/dif_rv_core_ibex_autogen.h"
 #include "sw/device/lib/dif/autogen/dif_rv_plic_autogen.h"
 #include "sw/device/lib/dif/autogen/dif_rv_timer_autogen.h"
 #include "sw/device/lib/dif/autogen/dif_soc_dbg_ctrl_autogen.h"
@@ -81,6 +82,7 @@ static dif_pwrmgr_t pwrmgr_aon;
 static dif_rom_ctrl_t rom_ctrl0;
 static dif_rom_ctrl_t rom_ctrl1;
 static dif_rstmgr_t rstmgr_aon;
+static dif_rv_core_ibex_t rv_core_ibex;
 static dif_rv_plic_t rv_plic;
 static dif_rv_timer_t rv_timer;
 static dif_soc_dbg_ctrl_t soc_dbg_ctrl;
@@ -192,6 +194,9 @@ static void init_peripherals(void) {
 
   base_addr = mmio_region_from_addr(TOP_DARJEELING_RSTMGR_AON_BASE_ADDR);
   CHECK_DIF_OK(dif_rstmgr_init(base_addr, &rstmgr_aon));
+
+  base_addr = mmio_region_from_addr(TOP_DARJEELING_RV_CORE_IBEX_CFG_BASE_ADDR);
+  CHECK_DIF_OK(dif_rv_core_ibex_init(base_addr, &rv_core_ibex));
 
   base_addr = mmio_region_from_addr(TOP_DARJEELING_RV_PLIC_BASE_ADDR);
   CHECK_DIF_OK(dif_rv_plic_init(base_addr, &rv_plic));
@@ -740,6 +745,21 @@ static void trigger_alert_test(void) {
 
     // Verify that alert handler received it.
     exp_alert = kTopDarjeelingAlertIdRstmgrAonFatalFault + i;
+    CHECK_DIF_OK(dif_alert_handler_alert_is_cause(
+        &alert_handler, exp_alert, &is_cause));
+    CHECK(is_cause, "Expect alert %d!", exp_alert);
+
+    // Clear alert cause register
+    CHECK_DIF_OK(dif_alert_handler_alert_acknowledge(
+        &alert_handler, exp_alert));
+  }
+
+  // Write rv_core_ibex's alert_test reg and check alert_cause.
+  for (dif_rv_core_ibex_alert_t i = 0; i < 4; ++i) {
+    CHECK_DIF_OK(dif_rv_core_ibex_alert_force(&rv_core_ibex, kDifRvCoreIbexAlertFatalSwErr + i));
+
+    // Verify that alert handler received it.
+    exp_alert = kTopDarjeelingAlertIdRvCoreIbexFatalSwErr + i;
     CHECK_DIF_OK(dif_alert_handler_alert_is_cause(
         &alert_handler, exp_alert, &is_cause));
     CHECK(is_cause, "Expect alert %d!", exp_alert);

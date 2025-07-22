@@ -33,6 +33,7 @@ load("//hw/top_darjeeling/ip_autogen/pwrmgr:defs.bzl", "PWRMGR")
 load("//hw/top_darjeeling/ip_autogen/racl_ctrl:defs.bzl", "RACL_CTRL")
 load("//hw/ip/rom_ctrl:defs.bzl", "ROM_CTRL")
 load("//hw/top_darjeeling/ip_autogen/rstmgr:defs.bzl", "RSTMGR")
+load("//hw/top_darjeeling/ip_autogen/rv_core_ibex:defs.bzl", "RV_CORE_IBEX")
 load("//hw/ip/rv_dm:defs.bzl", "RV_DM")
 load("//hw/top_darjeeling/ip_autogen/rv_plic:defs.bzl", "RV_PLIC")
 load("//hw/ip/rv_timer:defs.bzl", "RV_TIMER")
@@ -74,6 +75,7 @@ DARJEELING = opentitan_top(
         RACL_CTRL,
         ROM_CTRL,
         RSTMGR,
+        RV_CORE_IBEX,
         RV_DM,
         RV_PLIC,
         RV_TIMER,

@@ -127,6 +127,7 @@ opentitan_test(
         "//sw/device/lib/dif/autogen:pwrmgr",
         "//sw/device/lib/dif/autogen:rom_ctrl",
         "//sw/device/lib/dif/autogen:rstmgr",
+        "//sw/device/lib/dif/autogen:rv_core_ibex",
         "//sw/device/lib/dif/autogen:rv_plic",
         "//sw/device/lib/dif/autogen:rv_timer",
         "//sw/device/lib/dif/autogen:soc_dbg_ctrl",
