@@ -385,25 +385,9 @@ module top_${top["name"]} #(
   assign rsts_ast_o = ${top['resets'].hier_paths['top'][:-1]};
 % endif
 
-  // ibex specific assignments
-  // TODO: This should be further automated in the future.
-  assign rv_core_ibex_irq_timer = intr_rv_timer_timer_expired_hart0_timer0;
-  assign rv_core_ibex_hart_id = '0;
 
   // Unconditionally disable the late debug feature and enable early debug
   assign rv_dm_otp_dis_rv_dm_late_debug = prim_mubi_pkg::MuBi8True;
-
-% if 'rv_core_ibex_boot_addr' in (sig['signame'] for sig in top['inter_signal']['definitions']):
-  ## Not all top levels have a rom controller.
-  ## For those that do not, reference the ROM directly.
-<% num_rom_ctrl = lib.num_rom_ctrl(top["module"]) %>\
-  % if num_rom_ctrl != 0:
-  assign rv_core_ibex_boot_addr = ADDR_SPACE_ROM_CTRL0__ROM;
-  % else:
-  ## Not all top levels have
-  assign rv_core_ibex_boot_addr = ADDR_SPACE_ROM;
-  % endif
-% endif
 
 % if top_has_alert_handler:
   // Wire up alert handler LPGs
