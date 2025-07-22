@@ -166,6 +166,20 @@ module top_darjeeling #(
   output prim_ram_1p_pkg::ram_1p_cfg_rsp_t       otbn_imem_ram_1p_cfg_rsp_o,
   input  prim_ram_1p_pkg::ram_1p_cfg_t       otbn_dmem_ram_1p_cfg_i,
   output prim_ram_1p_pkg::ram_1p_cfg_rsp_t       otbn_dmem_ram_1p_cfg_rsp_o,
+  input  prim_esc_pkg::esc_rx_t [3:0] rv_core_ibex.esc_rx_i,
+  output prim_esc_pkg::esc_tx_t [3:0] rv_core_ibex.esc_tx_o,
+  output logic       rv_core_ibex_nmi_wdog_o,
+  input  otp_ctrl_pkg::sram_otp_key_req_t [3:0] rv_core_ibex.icache_otp_key_req_i,
+  output otp_ctrl_pkg::sram_otp_key_rsp_t [3:0] rv_core_ibex.icache_otp_key_rsp_o,
+  output lc_ctrl_pkg::lc_tx_t       rv_core_ibex.pwrmgr_cpu_en_o,
+  input  edn_pkg::edn_req_t [7:0] rv_core_ibex.edn_req_i,
+  output edn_pkg::edn_rsp_t [7:0] rv_core_ibex.edn_rsp_o,
+  output lc_ctrl_pkg::lc_tx_t       rv_core_ibex.lc_cpu_en_o,
+  output logic       rv_core_ibex.irq_software_o,
+  output logic       rv_core_ibex.irq_external_o,
+  output logic       rv_core_ibex.debug_req_o,
+  input  rv_core_ibex_pkg::cpu_crash_dump_t       rv_core_ibex.crash_dump_i,
+  input  rv_core_ibex_pkg::cpu_pwrmgr_t       rv_core_ibex.pwrmgr_i,
   input  prim_ram_2p_pkg::ram_2p_cfg_t       spi_device_ram_2p_cfg_sys2spi_i,
   output prim_ram_2p_pkg::ram_2p_cfg_rsp_t       spi_device_ram_2p_cfg_rsp_sys2spi_o,
   output prim_ram_2p_pkg::ram_2p_cfg_rsp_t       spi_device_ram_2p_cfg_rsp_spi2sys_o,
@@ -751,6 +765,12 @@ module top_darjeeling #(
   assign ast_lc_dft_en_o = lc_ctrl_lc_dft_en;
   assign ast_lc_hw_debug_en_o = lc_ctrl_lc_hw_debug_en;
   assign ast_obs_ctrl = obs_ctrl_i;
+  assign alert_handler_esc_rx = rv_core_ibex.esc_rx_i;
+  assign rv_core_ibex.esc_tx_o = alert_handler_esc_tx;
+  assign otp_ctrl_sram_otp_key_req = rv_core_ibex.icache_otp_key_req_i;
+  assign rv_core_ibex.icache_otp_key_rsp_o = otp_ctrl_sram_otp_key_rsp;
+  assign edn0_edn_req = rv_core_ibex.edn_req_i;
+  assign rv_core_ibex.edn_rsp_o = edn0_edn_rsp;
   assign pwrmgr_boot_status_o = pwrmgr_aon_boot_status;
   assign racl_policies_o = racl_ctrl_racl_policies;
 
@@ -1189,7 +1209,7 @@ module top_darjeeling #(
       .lc_seed_hw_rd_en_i(lc_ctrl_lc_seed_hw_rd_en),
       .lc_check_byp_en_i(lc_ctrl_lc_check_byp_en),
       .otp_keymgr_key_o(otp_ctrl_otp_keymgr_key),
-      .sram_otp_key_i(otp_ctrl_sram_otp_key_req),
+      .sram_otp_key_i(otp_ctrl_sram_otp_key_req_i),
       .sram_otp_key_o(otp_ctrl_sram_otp_key_rsp),
       .otbn_otp_key_i(otp_ctrl_otbn_otp_key_req),
       .otbn_otp_key_o(otp_ctrl_otbn_otp_key_rsp),
@@ -1289,7 +1309,7 @@ module top_darjeeling #(
       .lc_nvm_debug_en_o(),
       .lc_hw_debug_clr_o(lc_ctrl_lc_hw_debug_clr),
       .lc_hw_debug_en_o(lc_ctrl_lc_hw_debug_en),
-      .lc_cpu_en_o(),
+      .lc_cpu_en_o(rv_core_ibex.lc_cpu_en_o),
       .lc_keymgr_en_o(lc_ctrl_lc_keymgr_en),
       .lc_escalate_en_o(lc_ctrl_lc_escalate_en),
       .lc_clk_byp_req_o(lc_ctrl_lc_clk_byp_req),
@@ -1338,7 +1358,7 @@ module top_darjeeling #(
       .crashdump_o(alert_handler_crashdump),
       .edn_o(edn0_edn_req[3]),
       .edn_i(edn0_edn_rsp[3]),
-      .esc_rx_i(alert_handler_esc_rx),
+      .esc_rx_i(alert_handler_esc_rx_i),
       .esc_tx_o(alert_handler_esc_tx),
       .tl_i(alert_handler_tl_req),
       .tl_o(alert_handler_tl_rsp),
@@ -1422,14 +1442,14 @@ module top_darjeeling #(
       .pwr_flash_i(pwrmgr_pkg::PWR_FLASH_DEFAULT),
       .esc_rst_tx_i(alert_handler_esc_tx[2]),
       .esc_rst_rx_o(alert_handler_esc_rx[2]),
-      .pwr_cpu_i(rv_core_ibex_pkg::CPU_PWRMGR_DEFAULT),
+      .pwr_cpu_i(rv_core_ibex.pwrmgr_i),
       .wakeups_i(pwrmgr_aon_wakeups),
       .rstreqs_i(pwrmgr_aon_rstreqs),
       .ndmreset_req_i(rv_dm_ndmreset_req),
       .strap_o(pwrmgr_aon_strap),
       .low_power_o(pwrmgr_aon_low_power),
       .rom_ctrl_i(pwrmgr_aon_rom_ctrl),
-      .fetch_en_o(),
+      .fetch_en_o(rv_core_ibex.pwrmgr_cpu_en_o),
       .lc_dft_en_i(lc_ctrl_lc_dft_en),
       .lc_hw_debug_en_i(lc_ctrl_lc_hw_debug_en),
       .sw_rst_req_i(rstmgr_aon_sw_rst_req),
@@ -1465,7 +1485,7 @@ module top_darjeeling #(
       .resets_o(rstmgr_aon_resets),
       .rst_en_o(rstmgr_aon_rst_en),
       .alert_dump_i(alert_handler_crashdump),
-      .cpu_dump_i(rv_core_ibex_pkg::CPU_CRASH_DUMP_DEFAULT),
+      .cpu_dump_i(rv_core_ibex.crash_dump_i),
       .sw_rst_req_o(rstmgr_aon_sw_rst_req),
       .tl_i(rstmgr_aon_tl_req),
       .tl_o(rstmgr_aon_tl_rsp),
@@ -1586,7 +1606,7 @@ module top_darjeeling #(
       .alert_rx_i  ( alert_rx[20:20] ),
 
       // Inter-module signals
-      .nmi_wdog_timer_bark_o(),
+      .nmi_wdog_timer_bark_o(rv_core_ibex_nmi_wdog_o),
       .wkup_req_o(pwrmgr_aon_wakeups[1]),
       .aon_timer_rst_req_o(pwrmgr_aon_rstreqs[0]),
       .lc_escalate_en_i(lc_ctrl_lc_escalate_en),
@@ -1750,7 +1770,7 @@ module top_darjeeling #(
       .unavailable_i(1'b0),
       .ndmreset_req_o(rv_dm_ndmreset_req),
       .dmactive_o(),
-      .debug_req_o(),
+      .debug_req_o(rv_core_ibex.debug_req_o),
       .lc_escalate_en_i(lc_ctrl_lc_escalate_en),
       .lc_check_byp_en_i(lc_ctrl_lc_check_byp_en),
       .strap_en_i(pwrmgr_aon_strap),
@@ -1783,9 +1803,9 @@ module top_darjeeling #(
       .alert_rx_i  ( alert_rx[52:52] ),
 
       // Inter-module signals
-      .irq_o(),
+      .irq_o(rv_core_ibex.irq_external_o),
       .irq_id_o(),
-      .msip_o(),
+      .msip_o(rv_core_ibex.irq_software_o),
       .tl_i(rv_plic_tl_req),
       .tl_o(rv_plic_tl_rsp),
       .intr_src_i (intr_vector),
@@ -2083,7 +2103,7 @@ module top_darjeeling #(
       // Inter-module signals
       .csrng_cmd_o(csrng_csrng_cmd_req[0]),
       .csrng_cmd_i(csrng_csrng_cmd_rsp[0]),
-      .edn_i(edn0_edn_req),
+      .edn_i(edn0_edn_req_i),
       .edn_o(edn0_edn_rsp),
       .tl_i(edn0_tl_req),
       .tl_o(edn0_tl_rsp),

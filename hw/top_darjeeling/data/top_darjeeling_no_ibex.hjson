@@ -32,7 +32,8 @@
     wait_for_external_reset: true
 
     // Ibex halt feature via additional ROM Control input
-    halt_ibex_via_rom_ctrl: true
+    halt_ibex_via_rom_ctrl: true // NOTE: This section basically increases the number of ROM control inputs. 
+                                  // If it's set to 0 it will result in failure
   },
 
   // List of unmanaged external clocks
@@ -194,7 +195,7 @@
     ],
   },
   // Number of cores: used in rv_plic and timer
-  num_cores: "1",
+  num_cores: "0",
 
   // Interrupt handler information for the design
   interrupts: {
@@ -260,7 +261,7 @@
             "mbx_jtag.core",
             "mbx_pcie0.core",
             "mbx_pcie1.core",
-            "rv_core_ibex"
+            //"rv_core_ibex"
           ],
         },
       ]
@@ -1088,64 +1089,7 @@
       }
       attr: "ipgen",
       racl_mapping: 'racl/soc_rot_mapping.hjson'
-    },
-    { name: "rv_core_ibex",
-      type: "rv_core_ibex",
-      template_type: "rv_core_ibex",
-      attr: "ipgen",
-      ipgen_param: {
-        NumRegions: 32
-      }
-      param_decl: {PMPEnable: "1",
-                   PMPGranularity: "0",
-                   PMPNumRegions: "16",
-                   MHPMCounterNum: "10",
-                   MHPMCounterWidth: "32",
-                   PMPRstCfg: "ibex_pmp_reset_pkg::PmpCfgRst",
-                   PMPRstAddr: "ibex_pmp_reset_pkg::PmpAddrRst",
-                   PMPRstMsecCfg: "ibex_pmp_reset_pkg::PmpMseccfgRst",
-                   RV32E: "0",
-                   RV32M: "ibex_pkg::RV32MSingleCycle",
-                   RV32B: "ibex_pkg::RV32BOTEarlGrey",
-                   RegFile: "ibex_pkg::RegFileFF",
-                   BranchTargetALU: "1",
-                   WritebackStage: "1",
-                   ICache: "1",
-                   ICacheECC: "1",
-                   ICacheScramble: "1",
-                   BranchPredictor: "0",
-                   DbgTriggerEn: "1",
-                   DbgHwBreakNum: "4",
-                   SecureIbex: "1",
-                   DmBaseAddr: "tl_main_pkg::ADDR_SPACE_RV_DM__MEM",
-                   DmAddrMask: "tl_main_pkg::ADDR_MASK_RV_DM__MEM",
-                   DmHaltAddr: "tl_main_pkg::ADDR_SPACE_RV_DM__MEM + dm::HaltAddress[31:0]",
-                   DmExceptionAddr: "tl_main_pkg::ADDR_SPACE_RV_DM__MEM + dm::ExceptionAddress[31:0]",
-                   PipeLine: "1",
-                   NEscalationSeverities: "AlertHandlerEscNumSeverities",
-                   WidthPingCounter: "AlertHandlerEscPingCountWidth",
-                  },
-      clock_srcs: {
-        clk_i: "main",
-        clk_edn_i: "main",
-        clk_esc_i: {
-          clock: "io_div4",
-          group: "secure",
-        }
-        clk_otp_i: {
-          clock: "io_div4",
-          group: "secure",
-        }
-      },
-      clock_group: "infra",
-      reset_connections: {rst_ni: "lc",
-                          rst_edn_ni: "lc",
-                          rst_esc_ni: "lc_io_div4",
-                          rst_otp_ni: "lc_io_div4"},
-      base_addr: {
-        hart: "0x211f0000",
-      },
-    },
+    }
   ]
 
   // All memories wrapped up in relevant controllers
@@ -1198,22 +1142,18 @@
     'connect': {
       'ast.obs_ctrl'            : ['otp_macro.obs_ctrl']
       'alert_handler.crashdump' : ['rstmgr_aon.alert_dump'],
-      'alert_handler.esc_rx'    : ['rv_core_ibex.esc_rx',
-                                   'lc_ctrl.esc_scrap_state0_rx',
+      'alert_handler.esc_rx'    : ['lc_ctrl.esc_scrap_state0_rx',
                                    'lc_ctrl.esc_scrap_state1_rx'
                                    'pwrmgr_aon.esc_rst_rx'],
-      'alert_handler.esc_tx'    : ['rv_core_ibex.esc_tx',
-                                   'lc_ctrl.esc_scrap_state0_tx',
+      'alert_handler.esc_tx'    : ['lc_ctrl.esc_scrap_state0_tx',
                                    'lc_ctrl.esc_scrap_state1_tx',
                                    'pwrmgr_aon.esc_rst_tx'],
-      'aon_timer_aon.nmi_wdog_timer_bark' : ['rv_core_ibex.nmi_wdog']
       'csrng.csrng_cmd'         : ['edn0.csrng_cmd', 'edn1.csrng_cmd'],
       'csrng.entropy_src_hw_if' : ['entropy_src.entropy_src_hw_if'],
       'csrng.cs_aes_halt'       : ['entropy_src.cs_aes_halt'],
       'otp_ctrl.sram_otp_key'   : ['sram_ctrl_main.sram_otp_key',
                                    'sram_ctrl_ret_aon.sram_otp_key',
-                                   'sram_ctrl_mbox.sram_otp_key'
-                                   'rv_core_ibex.icache_otp_key']
+                                   'sram_ctrl_mbox.sram_otp_key'],
       'pwrmgr_aon.pwr_rst'      : ['rstmgr_aon.pwr'],
       'pwrmgr_aon.pwr_clk'      : ['clkmgr_aon.pwr'],
       'pwrmgr_aon.pwr_otp'      : ['otp_ctrl.pwr_otp'],
@@ -1222,7 +1162,6 @@
                                    'rv_dm.strap_en'],
       'pwrmgr_aon.low_power'    : ['pinmux_aon.sleep_en',
                                    'aon_timer_aon.sleep_mode'],
-      'pwrmgr_aon.fetch_en'     : ['rv_core_ibex.pwrmgr_cpu_en'],
       'pwrmgr_aon.rom_ctrl'     : ['rom_ctrl0.pwrmgr_data',
                                    'rom_ctrl1.pwrmgr_data',
                                    'soc_dbg_ctrl.continue_cpu_boot'],
@@ -1245,8 +1184,7 @@
 
       // Edn connections
       'edn0.edn'              : ['keymgr_dpe.edn', 'otp_ctrl.edn', 'kmac.entropy',
-                                 'alert_handler.edn', 'aes.edn', 'otbn.edn_urnd',
-                                 'rv_core_ibex.edn'],
+                                 'alert_handler.edn', 'aes.edn', 'otbn.edn_urnd'],
       'edn1.edn'              : ['otbn.edn_rnd'],
 
       // OTBN OTP scramble key
@@ -1298,7 +1236,6 @@
                                       'clkmgr_aon.lc_hw_debug_en',
                                       'pwrmgr_aon.lc_hw_debug_en',
                                       'soc_dbg_ctrl.lc_hw_debug_en'],
-      'lc_ctrl.lc_cpu_en'          : ['rv_core_ibex.lc_cpu_en'],
       'lc_ctrl.lc_keymgr_en'       : ['keymgr_dpe.lc_keymgr_en'],
       'lc_ctrl.lc_escalate_en'     : ['aes.lc_escalate_en',
                                       'kmac.lc_escalate_en',
@@ -1322,20 +1259,6 @@
 
       // OTP PRIM_OTP connections
       'otp_ctrl.otp_macro'         : ['otp_macro.otp'],
-
-      // rv_plic connections
-      'rv_plic.msip' : ['rv_core_ibex.irq_software'],
-      'rv_plic.irq'  : ['rv_core_ibex.irq_external'],
-
-      // rv_dm connections
-      'rv_dm.debug_req': ['rv_core_ibex.debug_req'],
-
-      // rv_timer connections
-
-
-      // rv core ibex connections
-      'rv_core_ibex.crash_dump' : ['rstmgr_aon.cpu_dump'],
-      'rv_core_ibex.pwrmgr'     : ['pwrmgr_aon.pwr_cpu'],
 
       // spi passthrough connection
       'spi_device.passthrough'     : ['spi_host0.passthrough']
@@ -1371,12 +1294,7 @@
         'rstmgr_aon.rst_en',
 
         // dedicated timer interrupt
-        'rv_core_ibex.irq_timer',
-
-        // hardwired connections
-        'rv_core_ibex.hart_id', 'rv_core_ibex.boot_addr',
-
-        // Xbars
+        //'rv_core_ibex.irq_timer',
 
         // OTP HW_CFG Broadcast signals.
         // TODO(#6713): The actual struct breakout and mapping currently needs to
@@ -1394,117 +1312,130 @@
 
     // ext is to create port in the top.
     'external': {
-        'ast.lc_dft_en'                        : '',
-        'ast.lc_hw_debug_en'                   : '',
-        'ast.obs_ctrl'                         : 'obs_ctrl',
-        'rom_ctrl0.rom_cfg'                    : 'rom_ctrl0_cfg',
-        'rom_ctrl1.rom_cfg'                    : 'rom_ctrl1_cfg',
-        'i2c0.ram_cfg'                         : 'i2c_ram_1p_cfg',
-        'i2c0.ram_cfg_rsp'                     : 'i2c_ram_1p_cfg_rsp',
-        'sram_ctrl_ret_aon.cfg'                : 'sram_ctrl_ret_aon_ram_1p_cfg',
-        'sram_ctrl_ret_aon.cfg_rsp'            : 'sram_ctrl_ret_aon_ram_1p_cfg_rsp',
-        'sram_ctrl_main.cfg'                   : 'sram_ctrl_main_ram_1p_cfg',
-        'sram_ctrl_main.cfg_rsp'               : 'sram_ctrl_main_ram_1p_cfg_rsp',
-        'sram_ctrl_mbox.cfg'                   : 'sram_ctrl_mbox_ram_1p_cfg',
-        'sram_ctrl_mbox.cfg_rsp'               : 'sram_ctrl_mbox_ram_1p_cfg_rsp',
-        'otbn.ram_cfg_imem'                    : 'otbn_imem_ram_1p_cfg',
-        'otbn.ram_cfg_rsp_imem'                : 'otbn_imem_ram_1p_cfg_rsp',
-        'otbn.ram_cfg_dmem'                    : 'otbn_dmem_ram_1p_cfg',
-        'otbn.ram_cfg_rsp_dmem'                : 'otbn_dmem_ram_1p_cfg_rsp',
-        'rv_core_ibex.ram_cfg_icache_tag'      : 'rv_core_ibex_icache_tag_ram_1p_cfg',
-        'rv_core_ibex.ram_cfg_rsp_icache_tag'  : 'rv_core_ibex_icache_tag_ram_1p_cfg_rsp',
-        'rv_core_ibex.ram_cfg_icache_data'     : 'rv_core_ibex_icache_data_ram_1p_cfg',
-        'rv_core_ibex.ram_cfg_rsp_icache_data' : 'rv_core_ibex_icache_data_ram_1p_cfg_rsp',
-        'spi_device.ram_cfg_sys2spi'           : 'spi_device_ram_2p_cfg_sys2spi',
-        'spi_device.ram_cfg_rsp_sys2spi'       : 'spi_device_ram_2p_cfg_rsp_sys2spi',
-        'spi_device.ram_cfg_rsp_spi2sys'       : 'spi_device_ram_2p_cfg_rsp_spi2sys',
-        'spi_device.ram_cfg_spi2sys'           : 'spi_device_ram_2p_cfg_spi2sys',
-        'pwrmgr_aon.boot_status'               : 'pwrmgr_boot_status',
-        'clkmgr_aon.jitter_en'                 : 'clk_main_jitter_en',
-        'clkmgr_aon.io_clk_byp_req'            : 'io_clk_byp_req',
-        'clkmgr_aon.io_clk_byp_ack'            : 'io_clk_byp_ack',
-        'clkmgr_aon.all_clk_byp_req'           : 'all_clk_byp_req',
-        'clkmgr_aon.all_clk_byp_ack'           : 'all_clk_byp_ack',
-        'clkmgr_aon.hi_speed_sel'              : 'hi_speed_sel',
-        'clkmgr_aon.div_step_down_req'         : 'div_step_down_req',
-        'clkmgr_aon.calib_rdy'                 : 'calib_rdy',
-        'dma.sys'                              : 'dma_sys',
-        'entropy_src.entropy_src_rng_enable'   : 'es_rng_enable',
-        'entropy_src.entropy_src_rng_valid'    : 'es_rng_valid',
-        'entropy_src.entropy_src_rng_bits'     : 'es_rng_bit',
-        'entropy_src.rng_fips'                 : 'es_rng_fips',
-        'mbx.tl_mbx'                           : 'mbx_tl',
-        'mbx0.doe_intr'                        : 'mbx0_doe_intr',
-        'mbx0.doe_intr_en'                     : 'mbx0_doe_intr_en',
-        'mbx0.doe_intr_support'                : 'mbx0_doe_intr_support',
-        'mbx0.doe_async_msg_support'           : 'mbx0_doe_async_msg_support',
-        'mbx1.doe_intr'                        : 'mbx1_doe_intr',
-        'mbx1.doe_intr_en'                     : 'mbx1_doe_intr_en',
-        'mbx1.doe_intr_support'                : 'mbx1_doe_intr_support',
-        'mbx1.doe_async_msg_support'           : 'mbx1_doe_async_msg_support',
-        'mbx2.doe_intr'                        : 'mbx2_doe_intr',
-        'mbx2.doe_intr_en'                     : 'mbx2_doe_intr_en',
-        'mbx2.doe_intr_support'                : 'mbx2_doe_intr_support',
-        'mbx2.doe_async_msg_support'           : 'mbx2_doe_async_msg_support',
-        'mbx3.doe_intr'                        : 'mbx3_doe_intr',
-        'mbx3.doe_intr_en'                     : 'mbx3_doe_intr_en',
-        'mbx3.doe_intr_support'                : 'mbx3_doe_intr_support',
-        'mbx3.doe_async_msg_support'           : 'mbx3_doe_async_msg_support',
-        'mbx4.doe_intr'                        : 'mbx4_doe_intr',
-        'mbx4.doe_intr_en'                     : 'mbx4_doe_intr_en',
-        'mbx4.doe_intr_support'                : 'mbx4_doe_intr_support',
-        'mbx4.doe_async_msg_support'           : 'mbx4_doe_async_msg_support',
-        'mbx5.doe_intr'                        : 'mbx5_doe_intr',
-        'mbx5.doe_intr_en'                     : 'mbx5_doe_intr_en',
-        'mbx5.doe_intr_support'                : 'mbx5_doe_intr_support',
-        'mbx5.doe_async_msg_support'           : 'mbx5_doe_async_msg_support',
-        'mbx6.doe_intr'                        : 'mbx6_doe_intr',
-        'mbx6.doe_intr_en'                     : 'mbx6_doe_intr_en',
-        'mbx6.doe_intr_support'                : 'mbx6_doe_intr_support',
-        'mbx6.doe_async_msg_support'           : 'mbx6_doe_async_msg_support',
-        'mbx_jtag.doe_intr'                    : 'mbx_jtag_doe_intr',
-        'mbx_jtag.doe_intr_en'                 : 'mbx_jtag_doe_intr_en',
-        'mbx_jtag.doe_intr_support'            : 'mbx_jtag_doe_intr_support',
-        'mbx_jtag.doe_async_msg_support'       : 'mbx_jtag_doe_async_msg_support',
-        'mbx_pcie0.doe_intr'                   : 'mbx_pcie0_doe_intr',
-        'mbx_pcie0.doe_intr_en'                : 'mbx_pcie0_doe_intr_en',
-        'mbx_pcie0.doe_intr_support'           : 'mbx_pcie0_doe_intr_support',
-        'mbx_pcie0.doe_async_msg_support'      : 'mbx_pcie0_doe_async_msg_support',
-        'mbx_pcie1.doe_intr'                   : 'mbx_pcie1_doe_intr',
-        'mbx_pcie1.doe_intr_en'                : 'mbx_pcie1_doe_intr_en',
-        'mbx_pcie1.doe_intr_support'           : 'mbx_pcie1_doe_intr_support',
-        'mbx_pcie1.doe_async_msg_support'      : 'mbx_pcie1_doe_async_msg_support',
-        'dbg.tl_dbg'                           : 'dbg_tl',
-        'rv_dm.next_dm_addr'                   : 'rv_dm_next_dm_addr',
-        'peri.tl_ast'                          : 'ast_tl',
-        'pwrmgr_aon.pwr_ast'                   : 'pwrmgr_ast',
-        'otp_macro.pwr_seq'                    : '',
-        'otp_macro.pwr_seq_h'                  : '',
-        'otp_macro.ext_voltage_h'              : 'otp_ext_voltage_h',
-        'otp_macro.otp_obs'                    : 'otp_obs',
-        'otp_macro.cfg'                        : 'otp_cfg',
-        'otp_macro.cfg_rsp'                    : 'otp_cfg_rsp',
-        'rstmgr_aon.por_n'                     : 'por_n'
-        'rv_core_ibex.fpga_info'               : 'fpga_info'
-        'soc_proxy.misc_tl_h2d'                : 'ctn_misc_tl_h2d',
-        'soc_proxy.misc_tl_d2h'                : 'ctn_misc_tl_d2h',
-        'soc_proxy.soc_fatal_alert'            : 'soc_fatal_alert',
-        'soc_proxy.soc_recov_alert'            : 'soc_recov_alert',
-        'soc_proxy.soc_wkup_async'             : 'soc_wkup_async',
-        'soc_proxy.soc_rst_req_async'          : 'soc_rst_req_async',
-        'soc_proxy.soc_intr_async'             : 'soc_intr_async',
-        'soc_proxy.soc_lsio_trigger'           : 'soc_lsio_trigger',
-        'soc_proxy.soc_gpi_async'              : 'soc_gpi_async',
-        'soc_proxy.soc_gpo_async'              : 'soc_gpo_async',
-        'soc_proxy.integrator_id'              : 'integrator_id',
-        'spi_device.sck_monitor'               : 'sck_monitor',
-        'soc_dbg_ctrl.soc_dbg_policy_bus'      : 'soc_dbg_policy_bus',
-        'soc_dbg_ctrl.halt_cpu_boot'           : 'debug_halt_cpu_boot',
-        'racl_ctrl.racl_policies'              : 'racl_policies',
-        'racl_ctrl.racl_error_external'        : 'racl_error',
-        'ac_range_check.range_check_overwrite' : 'ac_range_check_overwrite',
-        'ac_range_check.ctn_filtered_tl_h2d'   : 'ctn_tl_h2d',
-        'ac_range_check.ctn_filtered_tl_d2h'   : 'ctn_tl_d2h'
+        'ast.lc_dft_en'                            : '',
+        'ast.lc_hw_debug_en'                       : '',
+        'ast.obs_ctrl'                             : 'obs_ctrl',
+        'rom_ctrl0.rom_cfg'                        : 'rom_ctrl0_cfg',
+        'rom_ctrl1.rom_cfg'                        : 'rom_ctrl1_cfg',
+        'i2c0.ram_cfg'                             : 'i2c_ram_1p_cfg',
+        'i2c0.ram_cfg_rsp'                         : 'i2c_ram_1p_cfg_rsp',
+        'sram_ctrl_ret_aon.cfg'                    : 'sram_ctrl_ret_aon_ram_1p_cfg',
+        'sram_ctrl_ret_aon.cfg_rsp'                : 'sram_ctrl_ret_aon_ram_1p_cfg_rsp',
+        'sram_ctrl_main.cfg'                       : 'sram_ctrl_main_ram_1p_cfg',
+        'sram_ctrl_main.cfg_rsp'                   : 'sram_ctrl_main_ram_1p_cfg_rsp',
+        'sram_ctrl_mbox.cfg'                       : 'sram_ctrl_mbox_ram_1p_cfg',
+        'sram_ctrl_mbox.cfg_rsp'                   : 'sram_ctrl_mbox_ram_1p_cfg_rsp',
+        'otbn.ram_cfg_imem'                        : 'otbn_imem_ram_1p_cfg',
+        'otbn.ram_cfg_rsp_imem'                    : 'otbn_imem_ram_1p_cfg_rsp',
+        'otbn.ram_cfg_dmem'                        : 'otbn_dmem_ram_1p_cfg',
+        'otbn.ram_cfg_rsp_dmem'                    : 'otbn_dmem_ram_1p_cfg_rsp',
+        /*========================================================================
+        // This section contains all the signals for rv_core_ibex that used to
+        // be intermodule signals and that now must be external.
+        ==========================================================================*/
+        'alert_handler.esc_rx'                     : 'rv_core_ibex.esc_rx',
+        'alert_handler.esc_tx'                     : 'rv_core_ibex.esc_tx',
+        'aon_timer_aon.nmi_wdog_timer_bark'        : 'rv_core_ibex_nmi_wdog',
+        'otp_ctrl.sram_otp_key'                    : 'rv_core_ibex.icache_otp_key',
+        'pwrmgr_aon.fetch_en'                      : 'rv_core_ibex.pwrmgr_cpu_en',
+        'edn0.edn'                                 : 'rv_core_ibex.edn',
+        'lc_ctrl.lc_cpu_en'                        : 'rv_core_ibex.lc_cpu_en',
+        'rv_plic.msip'                             : 'rv_core_ibex.irq_software',
+        'rv_plic.irq'                              : 'rv_core_ibex.irq_external',
+        'rv_dm.debug_req'                          : 'rv_core_ibex.debug_req',
+        'rstmgr_aon.cpu_dump'                      : 'rv_core_ibex.crash_dump',
+        'pwrmgr_aon.pwr_cpu'                       : 'rv_core_ibex.pwrmgr',
+        'intr_rv_timer_timer_expired_hart0_timer0_o' : 'rv_core_ibex.irq_timer',
+        // END OF SECTION
+        'spi_device.ram_cfg_sys2spi'               : 'spi_device_ram_2p_cfg_sys2spi',
+        'spi_device.ram_cfg_rsp_sys2spi'           : 'spi_device_ram_2p_cfg_rsp_sys2spi',
+        'spi_device.ram_cfg_rsp_spi2sys'           : 'spi_device_ram_2p_cfg_rsp_spi2sys',
+        'spi_device.ram_cfg_spi2sys'               : 'spi_device_ram_2p_cfg_spi2sys',
+        'pwrmgr_aon.boot_status'                   : 'pwrmgr_boot_status',
+        'clkmgr_aon.jitter_en'                     : 'clk_main_jitter_en',
+        'clkmgr_aon.io_clk_byp_req'                : 'io_clk_byp_req',
+        'clkmgr_aon.io_clk_byp_ack'                : 'io_clk_byp_ack',
+        'clkmgr_aon.all_clk_byp_req'               : 'all_clk_byp_req',
+        'clkmgr_aon.all_clk_byp_ack'               : 'all_clk_byp_ack',
+        'clkmgr_aon.hi_speed_sel'                  : 'hi_speed_sel',
+        'clkmgr_aon.div_step_down_req'             : 'div_step_down_req',
+        'clkmgr_aon.calib_rdy'                     : 'calib_rdy',
+        'dma.sys'                                  : 'dma_sys',
+        'entropy_src.entropy_src_rng_enable'       : 'es_rng_enable',
+        'entropy_src.entropy_src_rng_valid'        : 'es_rng_valid',
+        'entropy_src.entropy_src_rng_bits'         : 'es_rng_bit',
+        'entropy_src.rng_fips'                     : 'es_rng_fips',
+        'mbx.tl_mbx'                               : 'mbx_tl',
+        'mbx0.doe_intr'                            : 'mbx0_doe_intr',
+        'mbx0.doe_intr_en'                         : 'mbx0_doe_intr_en',
+        'mbx0.doe_intr_support'                    : 'mbx0_doe_intr_support',
+        'mbx0.doe_async_msg_support'               : 'mbx0_doe_async_msg_support',
+        'mbx1.doe_intr'                            : 'mbx1_doe_intr',
+        'mbx1.doe_intr_en'                         : 'mbx1_doe_intr_en',
+        'mbx1.doe_intr_support'                    : 'mbx1_doe_intr_support',
+        'mbx1.doe_async_msg_support'               : 'mbx1_doe_async_msg_support',
+        'mbx2.doe_intr'                            : 'mbx2_doe_intr',
+        'mbx2.doe_intr_en'                         : 'mbx2_doe_intr_en',
+        'mbx2.doe_intr_support'                    : 'mbx2_doe_intr_support',
+        'mbx2.doe_async_msg_support'               : 'mbx2_doe_async_msg_support',
+        'mbx3.doe_intr'                            : 'mbx3_doe_intr',
+        'mbx3.doe_intr_en'                         : 'mbx3_doe_intr_en',
+        'mbx3.doe_intr_support'                    : 'mbx3_doe_intr_support',
+        'mbx3.doe_async_msg_support'               : 'mbx3_doe_async_msg_support',
+        'mbx4.doe_intr'                            : 'mbx4_doe_intr',
+        'mbx4.doe_intr_en'                         : 'mbx4_doe_intr_en',
+        'mbx4.doe_intr_support'                    : 'mbx4_doe_intr_support',
+        'mbx4.doe_async_msg_support'               : 'mbx4_doe_async_msg_support',
+        'mbx5.doe_intr'                            : 'mbx5_doe_intr',
+        'mbx5.doe_intr_en'                         : 'mbx5_doe_intr_en',
+        'mbx5.doe_intr_support'                    : 'mbx5_doe_intr_support',
+        'mbx5.doe_async_msg_support'               : 'mbx5_doe_async_msg_support',
+        'mbx6.doe_intr'                            : 'mbx6_doe_intr',
+        'mbx6.doe_intr_en'                         : 'mbx6_doe_intr_en',
+        'mbx6.doe_intr_support'                    : 'mbx6_doe_intr_support',
+        'mbx6.doe_async_msg_support'               : 'mbx6_doe_async_msg_support',
+        'mbx_jtag.doe_intr'                        : 'mbx_jtag_doe_intr',
+        'mbx_jtag.doe_intr_en'                     : 'mbx_jtag_doe_intr_en',
+        'mbx_jtag.doe_intr_support'                : 'mbx_jtag_doe_intr_support',
+        'mbx_jtag.doe_async_msg_support'           : 'mbx_jtag_doe_async_msg_support',
+        'mbx_pcie0.doe_intr'                       : 'mbx_pcie0_doe_intr',
+        'mbx_pcie0.doe_intr_en'                    : 'mbx_pcie0_doe_intr_en',
+        'mbx_pcie0.doe_intr_support'               : 'mbx_pcie0_doe_intr_support',
+        'mbx_pcie0.doe_async_msg_support'          : 'mbx_pcie0_doe_async_msg_support',
+        'mbx_pcie1.doe_intr'                       : 'mbx_pcie1_doe_intr',
+        'mbx_pcie1.doe_intr_en'                    : 'mbx_pcie1_doe_intr_en',
+        'mbx_pcie1.doe_intr_support'               : 'mbx_pcie1_doe_intr_support',
+        'mbx_pcie1.doe_async_msg_support'          : 'mbx_pcie1_doe_async_msg_support',
+        'dbg.tl_dbg'                               : 'dbg_tl',
+        'rv_dm.next_dm_addr'                       : 'rv_dm_next_dm_addr',
+        'peri.tl_ast'                              : 'ast_tl',
+        'pwrmgr_aon.pwr_ast'                       : 'pwrmgr_ast',
+        'otp_macro.pwr_seq'                        : '',
+        'otp_macro.pwr_seq_h'                      : '',
+        'otp_macro.ext_voltage_h'                  : 'otp_ext_voltage_h',
+        'otp_macro.otp_obs'                        : 'otp_obs',
+        'otp_macro.cfg'                            : 'otp_cfg',
+        'otp_macro.cfg_rsp'                        : 'otp_cfg_rsp',
+        'rstmgr_aon.por_n'                         : 'por_n'
+        'soc_proxy.misc_tl_h2d'                    : 'ctn_misc_tl_h2d',
+        'soc_proxy.misc_tl_d2h'                    : 'ctn_misc_tl_d2h',
+        'soc_proxy.soc_fatal_alert'                : 'soc_fatal_alert',
+        'soc_proxy.soc_recov_alert'                : 'soc_recov_alert',
+        'soc_proxy.soc_wkup_async'                 : 'soc_wkup_async',
+        'soc_proxy.soc_rst_req_async'              : 'soc_rst_req_async',
+        'soc_proxy.soc_intr_async'                 : 'soc_intr_async',
+        'soc_proxy.soc_lsio_trigger'               : 'soc_lsio_trigger',
+        'soc_proxy.soc_gpi_async'                  : 'soc_gpi_async',
+        'soc_proxy.soc_gpo_async'                  : 'soc_gpo_async',
+        'soc_proxy.integrator_id'                  : 'integrator_id',
+        'spi_device.sck_monitor'                   : 'sck_monitor',
+        'soc_dbg_ctrl.soc_dbg_policy_bus'          : 'soc_dbg_policy_bus',
+        'soc_dbg_ctrl.halt_cpu_boot'               : 'debug_halt_cpu_boot',
+        'racl_ctrl.racl_policies'                  : 'racl_policies',
+        'racl_ctrl.racl_error_external'            : 'racl_error',
+        'ac_range_check.range_check_overwrite'     : 'ac_range_check_overwrite',
+        'ac_range_check.ctn_filtered_tl_h2d'       : 'ctn_tl_h2d',
+        'ac_range_check.ctn_filtered_tl_d2h'       : 'ctn_tl_d2h'
     },
   },
 

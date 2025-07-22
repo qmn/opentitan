@@ -736,6 +736,7 @@ def check_intermodule(topcfg: Dict, prefix: str) -> int:
     total_error = 0
 
     for req, rsps in topcfg["inter_module"]["connect"].items():
+        #print(req)
         error = 0
         # checking the key, value are in correct format
         # Allowed format
@@ -786,9 +787,10 @@ def check_intermodule(topcfg: Dict, prefix: str) -> int:
 
         total_width = 0
         widths = []
-
+        #print(rsps)
         # Check rsp format
         for i, rsp in enumerate(rsps):
+            #print(i, rsp)
             rsp_m, rsp_s, rsp_i = filter_index(rsp)
             if rsp_s == "":
                 log.error(
@@ -876,6 +878,7 @@ def check_intermodule(topcfg: Dict, prefix: str) -> int:
             width = req_struct["width"]
 
         req_struct["end_idx"] = -1
+        #print(width, len(rsps), widths, total_width, "\n")
         if width > 1 or len(rsps) != 1:
             # If req width is same to the every width of rsps ==> broadcast
             if len(rsps) * [width] == widths:
