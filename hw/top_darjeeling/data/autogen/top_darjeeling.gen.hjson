@@ -11558,6 +11558,8 @@
           act: req
           width: 1
           inst_name: rv_core_ibex
+          default: ""
+          top_signame: main_tl_rv_core_ibex__corei
           index: -1
         }
         {
@@ -11568,6 +11570,8 @@
           act: req
           width: 1
           inst_name: rv_core_ibex
+          default: ""
+          top_signame: main_tl_rv_core_ibex__cored
           index: -1
         }
         {
@@ -11578,6 +11582,9 @@
           act: rsp
           width: 1
           inst_name: rv_core_ibex
+          default: ""
+          end_idx: -1
+          top_signame: rv_core_ibex_cfg_tl_d
           index: -1
         }
       ]
@@ -11974,6 +11981,14 @@
         aon_timer_aon.aon_timer_rst_req
         soc_proxy.rst_req_external
       ]
+      main.tl_rv_core_ibex__corei:
+      [
+        rv_core_ibex.corei_tl_h
+      ]
+      main.tl_rv_core_ibex__cored:
+      [
+        rv_core_ibex.cored_tl_h
+      ]
       main.tl_rv_dm__sba:
       [
         rv_dm.sba_tl_h
@@ -12053,6 +12068,10 @@
       keymgr_dpe.tl:
       [
         main.tl_keymgr_dpe
+      ]
+      rv_core_ibex.cfg_tl_d:
+      [
+        main.tl_rv_core_ibex__cfg
       ]
       sram_ctrl_main.regs_tl:
       [
@@ -12487,6 +12506,52 @@
       ]
       connections:
       {
+        rv_core_ibex.corei:
+        [
+          rom_ctrl0.rom
+          rom_ctrl1.rom
+          rv_dm.mem
+          sram_ctrl_main.ram
+          soc_proxy.ctn
+        ]
+        rv_core_ibex.cored:
+        [
+          rom_ctrl0.rom
+          rom_ctrl0.regs
+          rom_ctrl1.rom
+          rom_ctrl1.regs
+          rv_dm.mem
+          rv_dm.regs
+          sram_ctrl_main.ram
+          peri
+          aes
+          entropy_src
+          csrng
+          edn0
+          edn1
+          hmac
+          rv_plic
+          otbn
+          keymgr_dpe
+          kmac
+          sram_ctrl_main.regs
+          rv_core_ibex.cfg
+          sram_ctrl_mbox.ram
+          sram_ctrl_mbox.regs
+          soc_proxy.ctn
+          soc_proxy.core
+          dma
+          mbx0.core
+          mbx1.core
+          mbx2.core
+          mbx3.core
+          mbx4.core
+          mbx5.core
+          mbx6.core
+          mbx_jtag.core
+          mbx_pcie0.core
+          mbx_pcie1.core
+        ]
         rv_dm.sba:
         [
           rom_ctrl0.rom
@@ -12508,6 +12573,7 @@
           keymgr_dpe
           kmac
           sram_ctrl_main.regs
+          rv_core_ibex.cfg
           sram_ctrl_mbox.ram
           sram_ctrl_mbox.regs
           soc_proxy.ctn
@@ -12579,6 +12645,32 @@
       }
       nodes:
       [
+        {
+          name: rv_core_ibex.corei
+          type: host
+          addr_space: hart
+          clock: clk_main_i
+          reset: rst_main_ni
+          pipeline: false
+          xbar: false
+          stub: false
+          inst_type: ""
+          req_fifo_pass: true
+          rsp_fifo_pass: true
+        }
+        {
+          name: rv_core_ibex.cored
+          type: host
+          addr_space: hart
+          clock: clk_main_i
+          reset: rst_main_ni
+          pipeline: false
+          xbar: false
+          stub: false
+          inst_type: ""
+          req_fifo_pass: true
+          rsp_fifo_pass: true
+        }
         {
           name: rv_dm.sba
           type: host
@@ -13003,6 +13095,28 @@
                 hart: 0x21140000
               }
               size_byte: 0x100
+            }
+          ]
+          xbar: false
+          stub: false
+          pipeline: true
+        }
+        {
+          name: rv_core_ibex.cfg
+          type: device
+          clock: clk_main_i
+          reset: rst_main_ni
+          req_fifo_pass: false
+          rsp_fifo_pass: false
+          inst_type: rv_core_ibex
+          addr_range:
+          [
+            {
+              base_addrs:
+              {
+                hart: 0x211f0000
+              }
+              size_byte: 0x800
             }
           ]
           xbar: false
@@ -13489,6 +13603,32 @@
       inter_signal_list:
       [
         {
+          name: tl_rv_core_ibex__corei
+          struct: tl
+          package: tlul_pkg
+          type: req_rsp
+          act: rsp
+          inst_name: main
+          width: 1
+          default: ""
+          end_idx: -1
+          top_signame: main_tl_rv_core_ibex__corei
+          index: -1
+        }
+        {
+          name: tl_rv_core_ibex__cored
+          struct: tl
+          package: tlul_pkg
+          type: req_rsp
+          act: rsp
+          inst_name: main
+          width: 1
+          default: ""
+          end_idx: -1
+          top_signame: main_tl_rv_core_ibex__cored
+          index: -1
+        }
+        {
           name: tl_rv_dm__sba
           struct: tl
           package: tlul_pkg
@@ -13871,6 +14011,18 @@
           width: 1
           default: ""
           top_signame: keymgr_dpe_tl
+          index: -1
+        }
+        {
+          name: tl_rv_core_ibex__cfg
+          struct: tl
+          package: tlul_pkg
+          type: req_rsp
+          act: req
+          inst_name: main
+          width: 1
+          default: ""
+          top_signame: rv_core_ibex_cfg_tl_d
           index: -1
         }
         {
@@ -27357,6 +27509,8 @@
         act: req
         width: 1
         inst_name: rv_core_ibex
+        default: ""
+        top_signame: main_tl_rv_core_ibex__corei
         index: -1
       }
       {
@@ -27367,6 +27521,8 @@
         act: req
         width: 1
         inst_name: rv_core_ibex
+        default: ""
+        top_signame: main_tl_rv_core_ibex__cored
         index: -1
       }
       {
@@ -27377,6 +27533,35 @@
         act: rsp
         width: 1
         inst_name: rv_core_ibex
+        default: ""
+        end_idx: -1
+        top_signame: rv_core_ibex_cfg_tl_d
+        index: -1
+      }
+      {
+        name: tl_rv_core_ibex__corei
+        struct: tl
+        package: tlul_pkg
+        type: req_rsp
+        act: rsp
+        inst_name: main
+        width: 1
+        default: ""
+        end_idx: -1
+        top_signame: main_tl_rv_core_ibex__corei
+        index: -1
+      }
+      {
+        name: tl_rv_core_ibex__cored
+        struct: tl
+        package: tlul_pkg
+        type: req_rsp
+        act: rsp
+        inst_name: main
+        width: 1
+        default: ""
+        end_idx: -1
+        top_signame: main_tl_rv_core_ibex__cored
         index: -1
       }
       {
@@ -27762,6 +27947,18 @@
         width: 1
         default: ""
         top_signame: keymgr_dpe_tl
+        index: -1
+      }
+      {
+        name: tl_rv_core_ibex__cfg
+        struct: tl
+        package: tlul_pkg
+        type: req_rsp
+        act: req
+        inst_name: main
+        width: 1
+        default: ""
+        top_signame: rv_core_ibex_cfg_tl_d
         index: -1
       }
       {
@@ -30912,6 +31109,50 @@
       {
         package: tlul_pkg
         struct: tl_h2d
+        signame: main_tl_rv_core_ibex__corei_req
+        width: 1
+        type: req_rsp
+        end_idx: -1
+        act: rsp
+        suffix: req
+        default: tlul_pkg::TL_H2D_DEFAULT
+      }
+      {
+        package: tlul_pkg
+        struct: tl_d2h
+        signame: main_tl_rv_core_ibex__corei_rsp
+        width: 1
+        type: req_rsp
+        end_idx: -1
+        act: rsp
+        suffix: rsp
+        default: ""
+      }
+      {
+        package: tlul_pkg
+        struct: tl_h2d
+        signame: main_tl_rv_core_ibex__cored_req
+        width: 1
+        type: req_rsp
+        end_idx: -1
+        act: rsp
+        suffix: req
+        default: tlul_pkg::TL_H2D_DEFAULT
+      }
+      {
+        package: tlul_pkg
+        struct: tl_d2h
+        signame: main_tl_rv_core_ibex__cored_rsp
+        width: 1
+        type: req_rsp
+        end_idx: -1
+        act: rsp
+        suffix: rsp
+        default: ""
+      }
+      {
+        package: tlul_pkg
+        struct: tl_h2d
         signame: main_tl_rv_dm__sba_req
         width: 1
         type: req_rsp
@@ -31342,6 +31583,28 @@
         package: tlul_pkg
         struct: tl_d2h
         signame: keymgr_dpe_tl_rsp
+        width: 1
+        type: req_rsp
+        end_idx: -1
+        act: rsp
+        suffix: rsp
+        default: ""
+      }
+      {
+        package: tlul_pkg
+        struct: tl_h2d
+        signame: rv_core_ibex_cfg_tl_d_req
+        width: 1
+        type: req_rsp
+        end_idx: -1
+        act: rsp
+        suffix: req
+        default: tlul_pkg::TL_H2D_DEFAULT
+      }
+      {
+        package: tlul_pkg
+        struct: tl_d2h
+        signame: rv_core_ibex_cfg_tl_d_rsp
         width: 1
         type: req_rsp
         end_idx: -1

@@ -621,6 +621,10 @@ module top_darjeeling #(
   tlul_pkg::tl_d2h_t       soc_proxy_ctn_tl_d2h;
   logic [3:0] pwrmgr_aon_wakeups;
   logic [1:0] pwrmgr_aon_rstreqs;
+  tlul_pkg::tl_h2d_t       main_tl_rv_core_ibex__corei_req;
+  tlul_pkg::tl_d2h_t       main_tl_rv_core_ibex__corei_rsp;
+  tlul_pkg::tl_h2d_t       main_tl_rv_core_ibex__cored_req;
+  tlul_pkg::tl_d2h_t       main_tl_rv_core_ibex__cored_rsp;
   tlul_pkg::tl_h2d_t       main_tl_rv_dm__sba_req;
   tlul_pkg::tl_d2h_t       main_tl_rv_dm__sba_rsp;
   tlul_pkg::tl_h2d_t       rv_dm_regs_tl_d_req;
@@ -661,6 +665,8 @@ module top_darjeeling #(
   tlul_pkg::tl_d2h_t       otbn_tl_rsp;
   tlul_pkg::tl_h2d_t       keymgr_dpe_tl_req;
   tlul_pkg::tl_d2h_t       keymgr_dpe_tl_rsp;
+  tlul_pkg::tl_h2d_t       rv_core_ibex_cfg_tl_d_req;
+  tlul_pkg::tl_d2h_t       rv_core_ibex_cfg_tl_d_rsp;
   tlul_pkg::tl_h2d_t       sram_ctrl_main_regs_tl_req;
   tlul_pkg::tl_d2h_t       sram_ctrl_main_regs_tl_rsp;
   tlul_pkg::tl_h2d_t       sram_ctrl_main_ram_tl_req;
@@ -862,11 +868,6 @@ module top_darjeeling #(
   // of top_darjeeling's boundary.
   assign clks_ast_o = clkmgr_aon_clocks;
   assign rsts_ast_o = rstmgr_aon_resets;
-
-  // ibex specific assignments
-  // TODO: This should be further automated in the future.
-  assign rv_core_ibex_irq_timer = intr_rv_timer_timer_expired_hart0_timer0;
-  assign rv_core_ibex_hart_id = '0;
 
   // Unconditionally disable the late debug feature and enable early debug
   assign rv_dm_otp_dis_rv_dm_late_debug = prim_mubi_pkg::MuBi8True;
@@ -2865,12 +2866,12 @@ module top_darjeeling #(
       .icache_otp_key_o(otp_ctrl_sram_otp_key_req[3]),
       .icache_otp_key_i(otp_ctrl_sram_otp_key_rsp[3]),
       .fpga_info_i(fpga_info_i),
-      .corei_tl_h_o(),
-      .corei_tl_h_i(tlul_pkg::TL_D2H_DEFAULT),
-      .cored_tl_h_o(),
-      .cored_tl_h_i(tlul_pkg::TL_D2H_DEFAULT),
-      .cfg_tl_d_i(tlul_pkg::TL_H2D_DEFAULT),
-      .cfg_tl_d_o(),
+      .corei_tl_h_o(main_tl_rv_core_ibex__corei_req),
+      .corei_tl_h_i(main_tl_rv_core_ibex__corei_rsp),
+      .cored_tl_h_o(main_tl_rv_core_ibex__cored_req),
+      .cored_tl_h_i(main_tl_rv_core_ibex__cored_rsp),
+      .cfg_tl_d_i(rv_core_ibex_cfg_tl_d_req),
+      .cfg_tl_d_o(rv_core_ibex_cfg_tl_d_rsp),
       .scanmode_i,
       .scan_rst_ni,
 
@@ -2999,6 +3000,14 @@ module top_darjeeling #(
     .rst_main_ni (rstmgr_aon_resets.rst_lc_n[rstmgr_pkg::Domain0Sel]),
     .rst_fixed_ni (rstmgr_aon_resets.rst_lc_io_div4_n[rstmgr_pkg::Domain0Sel]),
 
+    // port: tl_rv_core_ibex__corei
+    .tl_rv_core_ibex__corei_i(main_tl_rv_core_ibex__corei_req),
+    .tl_rv_core_ibex__corei_o(main_tl_rv_core_ibex__corei_rsp),
+
+    // port: tl_rv_core_ibex__cored
+    .tl_rv_core_ibex__cored_i(main_tl_rv_core_ibex__cored_req),
+    .tl_rv_core_ibex__cored_o(main_tl_rv_core_ibex__cored_rsp),
+
     // port: tl_rv_dm__sba
     .tl_rv_dm__sba_i(main_tl_rv_dm__sba_req),
     .tl_rv_dm__sba_o(main_tl_rv_dm__sba_rsp),
@@ -3122,6 +3131,10 @@ module top_darjeeling #(
     // port: tl_keymgr_dpe
     .tl_keymgr_dpe_o(keymgr_dpe_tl_req),
     .tl_keymgr_dpe_i(keymgr_dpe_tl_rsp),
+
+    // port: tl_rv_core_ibex__cfg
+    .tl_rv_core_ibex__cfg_o(rv_core_ibex_cfg_tl_d_req),
+    .tl_rv_core_ibex__cfg_i(rv_core_ibex_cfg_tl_d_rsp),
 
     // port: tl_sram_ctrl_main__regs
     .tl_sram_ctrl_main__regs_o(sram_ctrl_main_regs_tl_req),

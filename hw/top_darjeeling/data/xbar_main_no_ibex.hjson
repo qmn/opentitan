@@ -1,7 +1,7 @@
 // Copyright lowRISC contributors (OpenTitan project).
 // Licensed under the Apache License, Version 2.0, see LICENSE for details.
 // SPDX-License-Identifier: Apache-2.0
-{ name: "main",
+{ name: "main_no_ibex",
   type: "xbar",
   clock_primary: "clk_main_i", // Main clock, used in sockets
   other_clock_list: [ "clk_fixed_i"] // Secondary clocks used by specific nodes
@@ -88,7 +88,7 @@
       req_fifo_pass: false,
       rsp_fifo_pass: false,
     },
-    { name:      "peri",
+    { name:      "peri_no_ibex",
       type:      "device",
       clock:     "clk_fixed_i",
       reset:     "rst_fixed_ni",
@@ -378,7 +378,7 @@
     //],
     rv_dm.sba: [
       "rom_ctrl0.rom", "rom_ctrl0.regs", "rom_ctrl1.rom", "rom_ctrl1.regs",
-      "rv_dm.mem", "rv_dm.regs", "sram_ctrl_main.ram", "peri",
+      "rv_dm.mem", "rv_dm.regs", "sram_ctrl_main.ram", "peri_no_ibex",
       "aes", "entropy_src", "csrng", "edn0", "edn1", "hmac",
       "rv_plic", "otbn", "keymgr_dpe", "kmac", "sram_ctrl_main.regs",
       //"rv_core_ibex.cfg", 
@@ -392,7 +392,7 @@
     dma.host: [
       "sram_ctrl_main.ram", "sram_ctrl_mbox.ram",
       "aes", "hmac", "otbn", "keymgr_dpe", "kmac",
-      "soc_proxy.ctn", "peri"
+      "soc_proxy.ctn", "peri_no_ibex"
     ],
     mbx0.sram: [
       "sram_ctrl_mbox.ram",

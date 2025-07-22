@@ -552,6 +552,7 @@ def xbar_cross_node(node_name: str,
     host_xbar_nodes = [
         x for x in host_xbar["nodes"] if x["name"] == device_xbar["name"]
     ]
+
     assert len(host_xbar_nodes) == 1
     host_xbar_node = host_xbar_nodes[0]
     host_xbar_asid = host_xbar_node["addr_space"]

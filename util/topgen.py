@@ -1660,7 +1660,6 @@ def main():
     im.autoconnect(completecfg, name_to_block)
 
     # Generic Inter-module connection
-    # print(completecfg)
     im.elab_intermodule(completecfg)
 
     # Dump the complete top config
