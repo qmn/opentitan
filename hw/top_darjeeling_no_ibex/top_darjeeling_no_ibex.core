@@ -38,10 +38,10 @@ filesets:
       - lowrisc:constants:top_darjeeling_ibex_pmp_reset_pkg
       - lowrisc:ip:lc_ctrl
       - lowrisc:ip:mbx
-      - lowrisc:top_darjeeling:xbar_dbg
-      - lowrisc:top_darjeeling:xbar_main
-      - lowrisc:top_darjeeling:xbar_mbx
-      - lowrisc:top_darjeeling:xbar_peri
+      - lowrisc:top_darjeeling_no_ibex:xbar_dbg
+      - lowrisc:top_darjeeling_no_ibex:xbar_main
+      - lowrisc:top_darjeeling_no_ibex:xbar_mbx
+      - lowrisc:top_darjeeling_no_ibex:xbar_peri
       - lowrisc:darjeeling_ip:ac_range_check
       - lowrisc:darjeeling_ip:alert_handler
       - lowrisc:darjeeling_ip:clkmgr
@@ -118,13 +118,13 @@ targets:
       - tool_ascentlint  ? (files_ascentlint_waiver)
       - tool_veriblelint ? (files_veriblelint_waiver)
       - files_rtl_generic
-    toplevel: top_darjeeling
+    toplevel: top_darjeeling_no_ibex
 
   sim:
     default_tool: icarus
     filesets:
       - files_rtl_generic
-    toplevel: top_darjeeling
+    toplevel: top_darjeeling_no_ibex
 
   lint:
     <<: *default_target
@@ -145,8 +145,8 @@ targets:
     default_tool: icarus
     parameters:
       - SYNTHESIS=true
-    toplevel: top_darjeeling
+    toplevel: top_darjeeling_no_ibex
 
   formal:
     <<: *default_target
-    toplevel: top_darjeeling
+    toplevel: top_darjeeling_no_ibex
